@@ -1,0 +1,15 @@
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand text-warning" href="{% url 'home' %}">GROOVE & GRIME</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'collection' %}">Collection</a></li>
+                <li class="nav-item"><a class="nav-link btn btn-outline-warning text-warning px-3" href="#">Login</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
