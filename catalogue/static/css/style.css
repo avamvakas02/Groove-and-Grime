@@ -1,5 +1,27 @@
 body { background-color: #121212; color: #e0e0e0; font-family: 'Helvetica', sans-serif; }
 
+/* Logo Styling */
+.navbar-brand, .footer-logo {
+    font-family: 'Arial Black', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    font-size: 1.5rem;
+    transition: 0.3s;
+}
+
+.navbar-brand:hover, .footer-logo:hover {
+    color: #fff !important;
+    text-shadow: 0 0 10px #ffc107, 0 0 20px #ffc107;
+}
+
+/* Add a subtle highlight to the "&" */
+.logo-amp {
+    color: #fff;
+    font-style: italic;
+    margin: 0 2px;
+}
+
 /* Keep cards looking like cards, not columns */
 .card {
     background-color: #1e1e1e !important;
