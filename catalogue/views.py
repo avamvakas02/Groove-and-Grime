@@ -1,38 +1,32 @@
 from django.shortcuts import render
-from django.db.models import Q  # Essential for "OR" search queries
+from django.db.models import Q
 from .models import VinylRecord, Category
 
 def home(request):
     """
-    Renders the landing page (home.html).
-    Provides a professional entry point to the web application.
+    Landing Page View
+    This was missing, causing your 'AttributeError'
     """
     return render(request, 'home.html')
 
 def collection(request):
     """
-    Renders the shop/collection page (collection.html).
-    Handles the dynamic catalogue display and search functionality.
+    Shop Page View with Search and Randomization
     """
-    # 1. Get the search term from the URL (if the user typed something)
     query = request.GET.get('q')
-    
-    # 2. Get all categories to populate the Sidebar
     categories = Category.objects.all()
     
-    # 3. Search Logic (Requirement 12 & 13)
     if query:
-        # Filter records where the title, artist, or category contains the search term
+        # Filter by search term AND randomize
         records = VinylRecord.objects.filter(
             Q(title__icontains=query) | 
             Q(artist__icontains=query) |
             Q(category__name__icontains=query)
-        ).distinct()
+        ).distinct().order_by('?')
     else:
-        # If no search, show everything
-        records = VinylRecord.objects.all()
+        # Show all records in a random order
+        records = VinylRecord.objects.all().order_by('?')
     
-    # 4. Context dictionary to send data to the Template
     context = {
         'records': records,
         'categories': categories,
