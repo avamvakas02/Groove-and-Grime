@@ -1,0 +1,30 @@
+:root {
+    --bg-body: #0f0f0f;         
+    --bg-surface: #1a1a1a;      
+    --accent-gold: #ffc107;     
+    --text-primary: #ffffff;
+    --text-secondary: #d1d1d1;
+    --border-color: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+}
+
+.navbar {
+    background-color: rgba(0, 0, 0, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-brand { font-weight: 900; text-transform: uppercase; }
+
+.logo-amp {
+    -webkit-text-stroke: 1px var(--accent-gold);
+    color: transparent;
+    font-style: italic;
+}
+
+footer { background-color: #080808; padding: 4rem 0; text-align: center; }

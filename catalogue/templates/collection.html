@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/collection.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4 mt-5">
@@ -6,9 +10,11 @@
         <div class="col-md-2 mb-4">
             <h5 class="text-warning mb-3 small fw-bold text-uppercase">Genres</h5>
             <div class="list-group list-group-flush border-secondary shadow-sm">
-                <a href="{% url 'collection' %}" class="list-group-item list-group-item-action">All Records</a>
+                <a href="{% url 'collection' %}" class="list-group-item list-group-item-action bg-transparent text-light border-secondary small">
+                    All Records
+                </a>
                 {% for cat in categories %}
-                <a href="?q={{ cat.name }}" class="list-group-item list-group-item-action">
+                <a href="?q={{ cat.name }}" class="list-group-item list-group-item-action bg-transparent text-light border-secondary small">
                     {{ cat.name }}
                 </a>
                 {% endfor %}
@@ -18,7 +24,7 @@
         <div class="col-md-10">
             <div class="d-flex justify-content-between align-items-end mb-5">
                 <div>
-                    <h2 class="fw-bold mb-0">THE COLLECTION</h2>
+                    <h2 class="fw-bold mb-0 text-white">THE COLLECTION</h2>
                     <p class="text-muted small mb-0">Showing {{ records.count }} premium wax cuts</p>
                 </div>
 
@@ -35,7 +41,7 @@
                 <div class="col">
                     <div class="card bg-dark border-secondary overflow-hidden">
                         {% if record.image %}
-                        <img src="{{ record.image.url }}" class="card-img-top" alt="{{ record.title }}" style="object-fit: cover; height: 200px; width: 100%;">
+                        <img src="{{ record.image.url }}" class="card-img-top" alt="{{ record.title }}" style="aspect-ratio: 1/1; object-fit: cover; width: 100%;">
                         {% endif %}
                         
                         <div class="card-body d-flex flex-column">
@@ -48,7 +54,7 @@
                             
                             <div class="mt-auto">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="text-white fw-bold small">${{ record.price }}</span>
+                                    <span class="text-white fw-bold small">&euro;{{ record.price }}</span>
                                     <span class="badge border border-secondary text-secondary fw-normal" style="font-size: 0.6rem;">{{ record.condition }}</span>
                                 </div>
                                 <button class="btn btn-warning btn-sm w-100 py-2" style="font-size: 0.75rem;">+ ADD TO CRATE</button>
