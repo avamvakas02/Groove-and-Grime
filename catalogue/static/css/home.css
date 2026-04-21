@@ -1,0 +1,80 @@
+/* --- HERO SECTION --- */
+.hero-wrap {
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    background-size: cover !important;
+    background-position: center !important;
+}
+
+.hero-overlay {
+    background: linear-gradient(rgba(0,0,0,0.5), #050505);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* --- STATS SECTION --- */
+.stats-bar {
+    background-color: #121212;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.stat-number {
+    color: var(--accent-gold);
+    font-weight: 900;
+}
+
+.stat-label {
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+}
+
+/* --- FEATURED CARDS --- */
+.featured-card {
+    height: 450px;
+    background-color: #000;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: 0.3s ease;
+}
+
+.featured-card:hover {
+    border-color: var(--accent-gold);
+}
+
+.featured-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.4s;
+}
+
+.featured-card:hover .featured-img {
+    transform: scale(1.1);
+    opacity: 0.7;
+}
+
+.featured-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    padding: 2rem;
+    width: 100%;
+    background: linear-gradient(transparent, rgba(0,0,0,0.95));
+    z-index: 2;
+}
+
+/* --- CTA SECTION --- */
+.cta-box {
+    background-color: #121212;
+    border: 1px solid var(--accent-gold);
+    padding: 4rem;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}

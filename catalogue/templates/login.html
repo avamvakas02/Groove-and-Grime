@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card bg-dark border-secondary p-4 shadow-lg">
+                <div class="text-center mb-4">
+                    <h2 class="text-warning fw-bold text-uppercase">Welcome Back</h2>
+                    <p class="text-muted small">Enter your credentials to access the vault.</p>
+                </div>
+                
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label text-warning small fw-bold text-uppercase">Username</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-warning small fw-bold text-uppercase">Password</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    
+                    {% if form.errors %}
+                        <div class="text-danger small mb-3">Invalid username or password.</div>
+                    {% endif %}
+                    
+                    <button type="submit" class="btn btn-warning w-100 fw-bold py-3 mt-2">LOGIN</button>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p class="small text-muted">New to the shop? <a href="{% url 'register' %}" class="text-warning text-decoration-none fw-bold">Sign Up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

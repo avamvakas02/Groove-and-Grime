@@ -1,30 +1,85 @@
+/* --- CSS VARIABLES --- */
 :root {
-    --bg-body: #0f0f0f;         
-    --bg-surface: #1a1a1a;      
+    --bg-body: #050505;         /* Even darker for maximum contrast */
+    --bg-surface: #121212;      
     --accent-gold: #ffc107;     
-    --text-primary: #ffffff;
-    --text-secondary: #d1d1d1;
-    --border-color: rgba(255, 255, 255, 0.1);
+    --text-pure: #ffffff;       /* Pure white */
+    --text-muted: #cccccc;      /* Bright grey for secondary info */
+    --border-color: rgba(255, 255, 255, 0.2);
 }
 
+/* --- GLOBAL STYLES --- */
 body {
     background-color: var(--bg-body);
-    color: var(--text-primary);
+    color: var(--text-pure) !important; /* Force global white text */
     font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
+/* --- NAVIGATION --- */
 .navbar {
     background-color: rgba(0, 0, 0, 0.95) !important;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px);
     border-bottom: 1px solid var(--border-color);
 }
 
-.navbar-brand { font-weight: 900; text-transform: uppercase; }
-
-.logo-amp {
-    -webkit-text-stroke: 1px var(--accent-gold);
-    color: transparent;
-    font-style: italic;
+.navbar-brand, .nav-link {
+    color: var(--text-pure) !important; /* Force navbar white */
+    text-transform: uppercase;
+    font-weight: 700;
 }
 
-footer { background-color: #080808; padding: 4rem 0; text-align: center; }
+.nav-link:hover, .nav-link.active {
+    color: var(--accent-gold) !important;
+}
+
+/* --- HEADINGS --- */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-pure) !important;
+    font-weight: 900 !important;
+    letter-spacing: -1px;
+}
+
+.display-1 {
+    font-size: clamp(3.5rem, 12vw, 8rem);
+    line-height: 0.85;
+    text-shadow: 0 5px 15px rgba(0,0,0,0.8);
+}
+
+/* --- UTILITIES --- */
+.text-outline {
+    -webkit-text-stroke: 1.5px var(--accent-gold);
+    color: transparent !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* --- AUTH AREA UX --- */
+.member-label {
+    color: var(--accent-gold);
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.btn-logout {
+    border: 1px solid var(--text-pure);
+    color: var(--text-pure);
+    background: transparent;
+    font-size: 0.7rem;
+    padding: 4px 12px;
+    transition: 0.3s;
+}
+
+.btn-logout:hover {
+    background: #ff4444;
+    border-color: #ff4444;
+    color: white;
+}
+
+footer {
+    border-top: 1px solid var(--border-color);
+    padding: 4rem 0;
+}

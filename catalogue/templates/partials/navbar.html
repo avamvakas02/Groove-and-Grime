@@ -1,28 +1,41 @@
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top py-3">
     <div class="container">
-        <a class="navbar-brand text-warning" href="{% url 'home' %}">
-            GROOVE <span class="logo-amp">&</span> GRIME
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+            GROOVE <span class="logo-amp mx-1">&</span> GRIME
         </a>
 
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active text-warning{% endif %}" href="{% url 'home' %}">Home</a>
+                <li class="nav-item px-2">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'collection' %}active text-warning{% endif %}" href="{% url 'collection' %}">Collection</a>
+                <li class="nav-item px-2">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'collection' %}active{% endif %}" href="{% url 'collection' %}">Collection</a>
                 </li>
                 
-                <li class="nav-item ms-lg-3">
-                    <a class="btn btn-outline-warning btn-sm px-4 fw-bold" href="#">LOGIN</a>
-                </li>
-                <li class="nav-item ms-lg-2">
-                    <a class="btn btn-warning btn-sm px-4 fw-bold text-dark" href="{% url 'register' %}">REGISTER</a>
-                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item d-flex align-items-center ms-lg-4 ps-lg-4 border-start border-secondary">
+                        <div class="text-end me-3">
+                            <span class="member-label d-block mb-0">Member</span>
+                            <span class="text-white fw-bold small">{{ user.username }}</span>
+                        </div>
+                        <form action="{% url 'logout' %}" method="post" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-logout fw-black">LOGOUT</button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-outline-light btn-sm px-4 fw-bold" href="{% url 'login' %}">LOGIN</a>
+                    </li>
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn btn-warning btn-sm px-4 fw-bold text-dark shadow-sm" href="{% url 'register' %}">REGISTER</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
