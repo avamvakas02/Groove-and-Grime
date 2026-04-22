@@ -1,7 +1,17 @@
 from django.contrib import admin
-from .models import Category, VinylRecord, Review
+from django.contrib.auth.admin import UserAdmin
+from .models import Category, VinylRecord, User
 
-# This allows the Admin to manage the catalogue 
+# Register the Custom User Model so you can edit Tiers in the Admin
+class CustomUserAdmin(UserAdmin):
+    model = User
+    fieldsets = UserAdmin.fieldsets + (
+        (None, {'fields': ('tier',)}),
+    )
+    list_display = ['username', 'email', 'tier', 'is_staff']
+
+admin.site.register(User, CustomUserAdmin)
 admin.site.register(Category)
 admin.site.register(VinylRecord)
-admin.site.register(Review)
+
+# REMOVED: admin.site.register(Review) <- This was causing the crash
