@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h1 class="text-white fw-black text-uppercase mb-1">{{ label_name }}</h1>
+            <p class="text-white-50 mb-0">{{ records|length }} records on this label</p>
+        </div>
+        <a href="{% url 'labels' %}" class="btn btn-outline-warning btn-sm rounded-0">Back to Labels</a>
+    </div>
+
+    <div class="row g-3">
+        {% for record in records %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card bg-dark border-secondary h-100">
+                    {% if record.image %}
+                        <img src="{{ record.image.url }}" class="card-img-top" alt="{{ record.title }}" style="height: 220px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="text-white mb-1">{{ record.title }}</h5>
+                        <p class="text-white-50 small mb-1">Artist: <a href="{% url 'artist_detail' record.artist %}" class="text-warning text-decoration-none">{{ record.artist }}</a></p>
+                        <p class="text-white-50 small mb-0">In stock: <span class="text-white fw-bold">{{ record.stock }}</span></p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-white-50">No records available for this label yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

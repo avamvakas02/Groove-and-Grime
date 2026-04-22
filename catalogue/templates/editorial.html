@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="mb-4">
+        <h6 class="text-warning text-uppercase fw-bold mb-2" style="letter-spacing: 2px;">Public Blog</h6>
+        <h1 class="text-white fw-black text-uppercase mb-2">Editorial</h1>
+        <p class="text-white-50 mb-0">Mixes, scene news, and staff notes from the Groove & Grime floor.</p>
+    </div>
+
+    <div class="row g-4">
+        {% for post in posts %}
+            <div class="col-lg-4">
+                <article class="card bg-dark border-secondary h-100">
+                    <div class="card-body">
+                        <span class="badge bg-warning text-dark mb-3">{{ post.category }}</span>
+                        <h5 class="text-white fw-bold mb-3">{{ post.title }}</h5>
+                        <p class="text-white-50 small mb-0">{{ post.summary }}</p>
+                    </div>
+                </article>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

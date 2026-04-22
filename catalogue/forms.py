@@ -130,3 +130,28 @@ class MembershipPaymentForm(forms.Form):
         if not raw.isdigit() or len(raw) not in (3, 4):
             raise ValidationError("Please enter a valid CVV.")
         return raw
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    """Allow users to edit basic profile fields."""
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'form-control bg-dark text-white border-secondary',
+                'placeholder': 'Username',
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control bg-dark text-white border-secondary',
+                'placeholder': 'email@example.com',
+            }),
+            'first_name': forms.TextInput(attrs={
+                'class': 'form-control bg-dark text-white border-secondary',
+                'placeholder': 'First name',
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'form-control bg-dark text-white border-secondary',
+                'placeholder': 'Last name',
+            }),
+        }

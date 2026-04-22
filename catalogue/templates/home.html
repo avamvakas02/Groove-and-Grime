@@ -1,22 +1,33 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{# This block injects a page-specific CSS file into the shared base layout. #}
 {% block extra_css %}
+    {# Static path helper resolves to /static/css/home.css in development/production. #}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock %}
 
 {% block content %}
 
+{# HERO: first visual section users see when they land on the homepage. #}
+{# Background image is set inline here and darkened by overlay for text contrast. #}
 <section class="hero-wrap" style="background: url('{% static 'images/hero-bg.jpg' %}')">
+    {# Overlay improves readability against the photo. #}
     <div class="hero-overlay">
+        {# Bootstrap container keeps content centered and responsive. #}
         <div class="container">
             <div class="row">
+                {# Left-aligned intro text on large screens (8/12 grid columns). #}
                 <div class="col-lg-8">
+                    {# Small eyebrow text for quick category context. #}
                     <h6 class="text-warning text-uppercase mb-3 fw-bold ls-2">Premium Vinyl Selection</h6>
+                    {# Main brand headline with stylized ampersand span. #}
                     <h1 class="display-1 text-white mb-4 fw-black">GROOVE <span class="text-outline">&</span> GRIME</h1>
+                    {# Short value proposition paragraph. #}
                     <p class="lead text-white mb-5 opacity-75">
                         Athens' premier destination for underground wax. Curated techno, house, and rare pressings for the modern selector.
                     </p>
+                    {# Primary call-to-action sends users to the shop collection page. #}
                     <a href="{% url 'collection' %}" class="btn btn-warning btn-lg px-5 py-3 fw-black rounded-0">SHOP THE COLLECTION</a>
                 </div>
             </div>
@@ -24,21 +35,26 @@
     </div>
 </section>
 
+{# STATS: quick social-proof style numbers to build trust. #}
 <section class="stats-bar py-5">
     <div class="container text-center">
         <div class="row">
+            {# Stat card 1: catalogue depth signal. #}
             <div class="col-md-3">
                 <span class="stat-number display-5 d-block">40+</span>
                 <span class="stat-label">Rare Cuts</span>
             </div>
+            {# Stat card 2: quality promise. #}
             <div class="col-md-3">
                 <span class="stat-number display-5 d-block">100%</span>
                 <span class="stat-label">Audiophile Grade</span>
             </div>
+            {# Stat card 3: local delivery speed. #}
             <div class="col-md-3">
                 <span class="stat-number display-5 d-block">24H</span>
                 <span class="stat-label">Athens Delivery</span>
             </div>
+            {# Stat card 4: customer sentiment shorthand. #}
             <div class="col-md-3">
                 <span class="stat-number display-5 d-block">5/5</span>
                 <span class="stat-label">Selector Rating</span>
@@ -47,27 +63,77 @@
     </div>
 </section>
 
+{# ARTISTS + LABELS: visitor discovery shortcuts moved to homepage. #}
+<section class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <h3 class="text-white fw-black text-uppercase mb-0">Featured Artists</h3>
+                        <a href="{% url 'artists' %}" class="small text-warning text-decoration-none">View all</a>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for artist in top_artists %}
+                            <a href="{% url 'artist_detail' artist.artist %}" class="btn btn-sm btn-outline-warning rounded-0">
+                                {{ artist.artist }} <span class="text-white-50">({{ artist.record_count }})</span>
+                            </a>
+                        {% empty %}
+                            <p class="text-white-50 small mb-0">No artists available yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <h3 class="text-white fw-black text-uppercase mb-0">Featured Labels</h3>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for label in top_labels %}
+                            <span class="btn btn-sm btn-outline-light rounded-0 disabled">
+                                {{ label.label }} <span class="text-white-50">({{ label.record_count }})</span>
+                            </span>
+                        {% empty %}
+                            <p class="text-white-50 small mb-0">No labels available yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# FEATURED CATEGORIES: curated cards that route to filtered collection searches. #}
 <section class="container py-5 mt-5">
+    {# Section header row: title on left, "view all" link on right. #}
     <div class="d-flex justify-content-between align-items-end mb-5">
         <div>
             <h6 class="text-warning text-uppercase mb-2 fw-bold ls-2">Curated Crates</h6>
             <h2 class="display-4 text-white m-0 fw-black">THE VAULT</h2>
         </div>
+        {# Unfiltered collection shortcut. #}
         <a href="{% url 'collection' %}" class="text-white text-decoration-none border-bottom border-warning pb-1">View All Records</a>
     </div>
 
+    {# Three-column responsive card grid. #}
     <div class="row g-4">
+        {# Card 1: deep house search preset. #}
         <div class="col-md-4">
             <div class="featured-card">
                 <img src="{% static 'images/deep_house.jpg' %}" class="featured-img" alt="Deep House">
                 <div class="featured-content">
                     <h3 class="text-white mb-1 fw-black">DEEP HOUSE</h3>
                     <p class="text-white-50 small mb-3">Soulful melodies & steady rhythms.</p>
+                    {# Query string (q=Deep House) powers search in collection view. #}
                     <a href="{% url 'collection' %}?q=Deep House" class="btn btn-sm btn-outline-warning rounded-0 px-4">EXPLORE</a>
                 </div>
             </div>
         </div>
 
+        {# Card 2: tech house search preset. #}
         <div class="col-md-4">
             <div class="featured-card">
                 <img src="{% static 'images/techno.jpg' %}" class="featured-img" alt="Tech House">
@@ -79,6 +145,7 @@
             </div>
         </div>
 
+        {# Card 3: limited editions (currently links to full collection). #}
         <div class="col-md-4">
             <div class="featured-card">
                 <img src="{% static 'images/limited-edition.png' %}" class="featured-img" alt="Rare Finds">
@@ -92,12 +159,15 @@
     </div>
 </section>
 
+{# FINAL CTA: action adapts based on authentication state. #}
 <section class="container py-5 my-5">
     <div class="cta-box">
         <h2 class="display-5 text-white mb-3 fw-black text-uppercase">Stay in the Loop</h2>
         <p class="text-white-50 mb-4 mx-auto" style="max-width: 500px;">Join our community of selectors and get notified when new rare pressings hit the crates.</p>
+        {# Guests are encouraged to register. #}
         {% if not user.is_authenticated %}
             <a href="{% url 'register' %}" class="btn btn-warning btn-lg px-5 fw-black rounded-0 shadow-lg">CREATE AN ACCOUNT</a>
+        {# Logged-in users are encouraged to continue browsing records. #}
         {% else %}
             <a href="{% url 'collection' %}" class="btn btn-warning btn-lg px-5 fw-black rounded-0 shadow-lg">KEEP DIGGING</a>
         {% endif %}

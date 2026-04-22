@@ -1,7 +1,8 @@
+{% load static %}
 <footer class="mt-5 py-5 border-top border-secondary text-center">
     <div class="container">
-        <a class="footer-logo text-warning d-block mb-3 text-decoration-none" href="{% url 'home' %}">
-            GROOVE <span class="logo-amp">&</span> GRIME
+        <a class="footer-logo text-warning d-inline-flex flex-column align-items-center mb-3 text-decoration-none" href="{% url 'home' %}">
+            <img src="{% static 'images/logo.png' %}" alt="Groove & Grime logo" class="footer-brand-logo mb-2">
         </a>
         <p class="text-muted small mb-0">Premium House Music Vinyl Boutique</p>
         <p class="text-muted small">&copy; 2026 Athens, Greece.</p>

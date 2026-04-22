@@ -1,31 +1,74 @@
+{% load static %}
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top py-3">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
-            GROOVE <span class="logo-amp mx-1">&</span> GRIME
+        <a class="navbar-brand d-flex align-items-center fw-black" href="{% url 'home' %}">
+            <img src="{% static 'images/logo.png' %}" alt="Groove & Grime logo" class="brand-logo me-2">
+
         </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center">
+                
                 <li class="nav-item px-2">
                     <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
                 </li>
                 <li class="nav-item px-2">
                     <a class="nav-link {% if request.resolver_match.url_name == 'collection' %}active{% endif %}" href="{% url 'collection' %}">Collection</a>
                 </li>
+                <li class="nav-item px-2">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'pricing' %}active{% endif %}" href="{% url 'pricing' %}">Pricing</a>
+                </li>
+
+                {% if user.is_authenticated and user.tier == 'MANAGER' or user.is_authenticated and user.is_staff or user.is_authenticated and user.is_superuser %}
+                <li class="nav-item px-2">
+                    <a class="nav-link text-danger fw-bold" href="{% url 'manager_dashboard' %}">
+                        <i class="bi bi-speedometer2"></i> DASHBOARD
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if has_pro_access %}
+                    <li class="nav-item px-2 me-lg-3">
+                        <a class="nav-link position-relative d-flex align-items-center gap-2" href="{% url 'cart_detail' %}" aria-label="Open crate">
+                            <i class="bi bi-cart3 fs-5"></i>
+                            <span>CRATE</span>
+                            {% if cart|length > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size: 0.6rem;">
+                                {{ cart|length }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item px-2 me-lg-3">
+                        <a class="nav-link d-flex align-items-center gap-2 disabled text-white-50" href="{% url 'pricing' %}" aria-label="Upgrade membership">
+                            <i class="bi bi-cart3 fs-5"></i>
+                            <span>CRATE (MEMBERS)</span>
+                        </a>
+                    </li>
+                {% endif %}
                 
                 {% if user.is_authenticated %}
-                    <li class="nav-item d-flex align-items-center ms-lg-4 ps-lg-4 border-start border-secondary">
+                    <li class="nav-item px-2">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'edit_profile' %}active{% endif %}" href="{% url 'profile' %}">Profile</a>
+                    </li>
+                    <li class="nav-item d-flex align-items-center ms-lg-3 ps-lg-4 border-start border-secondary">
                         <div class="text-end me-3">
-                            <span class="member-label d-block mb-0">Member</span>
+                            <span class="member-label d-block mb-0" style="color: #ffc107; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase;">
+                                {{ user.get_tier_display }}
+                            </span>
                             <span class="text-white fw-bold small">{{ user.username }}</span>
                         </div>
+                        
                         <form action="{% url 'logout' %}" method="post" class="m-0">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-logout fw-black">LOGOUT</button>
+                            <button type="submit" class="btn btn-outline-light btn-sm fw-black" style="font-size: 0.7rem; padding: 4px 12px;">
+                                LOGOUT
+                            </button>
                         </form>
                     </li>
                 {% else %}

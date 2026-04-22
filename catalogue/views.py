@@ -7,7 +7,12 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
 from .models import VinylRecord, Category, User
-from .forms import RegisterForm, VinylRecordForm, MembershipPaymentForm
+from .forms import (
+    RegisterForm,
+    VinylRecordForm,
+    MembershipPaymentForm,
+    ProfileUpdateForm,
+)
 from .cart import Cart
 from .decorators import manager_required, purchase_access_required, has_pro_plus_access
 
@@ -62,28 +67,67 @@ def home(request):
 
 def collection(request):
     """Record catalogue with search and tier-based visibility."""
-    query = request.GET.get('q')
+    query = request.GET.get('q', '').strip()
+    selected_category = request.GET.get('category', '').strip()
+    selected_label = request.GET.get('label', '').strip()
+    selected_condition = request.GET.get('condition', '').strip()
+    min_price = request.GET.get('min_price', '').strip()
+    max_price = request.GET.get('max_price', '').strip()
     categories = Category.objects.all()
-    
-    # If a search query exists, search title/artist/category.
+    labels = (
+        VinylRecord.objects
+        .exclude(label__isnull=True)
+        .exclude(label__exact='')
+        .values_list('label', flat=True)
+        .distinct()
+        .order_by('label')
+    )
+    conditions = [choice[0] for choice in VinylRecord.CONDITION_CHOICES]
+
+    records = VinylRecord.objects.all()
+
+    # Full-text-ish search on key record descriptors.
     if query:
-        records = VinylRecord.objects.filter(
-            Q(title__icontains=query) | 
-            Q(artist__icontains=query) | 
+        records = records.filter(
+            Q(title__icontains=query) |
+            Q(artist__icontains=query) |
             Q(category__name__icontains=query) |
             Q(label__icontains=query)
-        ).distinct()
-    else:
-        records = VinylRecord.objects.all()
+        )
+
+    # Advanced filters.
+    if selected_category:
+        records = records.filter(category_id=selected_category)
+    if selected_label:
+        records = records.filter(label=selected_label)
+    if selected_condition:
+        records = records.filter(condition=selected_condition)
+    if min_price:
+        try:
+            records = records.filter(price__gte=Decimal(min_price))
+        except Exception:
+            messages.warning(request, "Invalid minimum price filter ignored.")
+    if max_price:
+        try:
+            records = records.filter(price__lte=Decimal(max_price))
+        except Exception:
+            messages.warning(request, "Invalid maximum price filter ignored.")
 
     # Hide exclusive records for guests and lower tiers.
     if not has_pro_plus_access(request.user):
         records = records.filter(is_exclusive=False)
 
     context = {
-        'records': records.order_by('-created_at'), 
-        'categories': categories, 
-        'query': query
+        'records': records.distinct().order_by('-created_at'),
+        'categories': categories,
+        'labels': labels,
+        'conditions': conditions,
+        'query': query,
+        'selected_category': selected_category,
+        'selected_label': selected_label,
+        'selected_condition': selected_condition,
+        'min_price': min_price,
+        'max_price': max_price,
     }
     return render(request, 'collection.html', context)
 
@@ -369,3 +413,24 @@ def change_membership(request, tier):
         'target_tier': tier,
         'target_tier_label': dict(User.TIER_CHOICES).get(tier, tier),
     })
+
+
+@login_required
+def profile(request):
+    """Display current user profile details."""
+    return render(request, 'profile.html')
+
+
+@login_required
+def edit_profile(request):
+    """Update current user profile details."""
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect('profile')
+    else:
+        form = ProfileUpdateForm(instance=request.user)
+
+    return render(request, 'profile.html', {'form': form})

@@ -29,6 +29,17 @@ body {
     font-weight: 700;
 }
 
+.brand-logo {
+    width: 128px;
+    height: 128px;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.brand-text {
+    line-height: 1;
+}
+
 .nav-link:hover, .nav-link.active {
     color: var(--accent-gold) !important;
 }
@@ -82,4 +93,28 @@ h1, h2, h3, h4, h5, h6 {
 footer {
     border-top: 1px solid var(--border-color);
     padding: 4rem 0;
+}
+
+.footer-logo {
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.footer-brand-logo {
+    width: 280px;
+    height: 280px;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+/* JS-Triggered Animations */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
 }

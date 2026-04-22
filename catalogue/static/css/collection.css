@@ -13,6 +13,10 @@
 .card-text {
     color: #d1d1d1 !important;
     font-size: 0.85rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .btn-warning {

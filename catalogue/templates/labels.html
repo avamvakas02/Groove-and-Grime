@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="mb-4">
+        <h1 class="text-white fw-black text-uppercase mb-1">Labels</h1>
+        <p class="text-white-50 mb-0">Browse catalogue labels and their current inventory.</p>
+    </div>
+
+    <div class="row g-3">
+        {% for label in labels %}
+            <div class="col-md-6 col-lg-4">
+                <a href="{% url 'label_detail' label.label %}" class="text-decoration-none">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-body">
+                            <h5 class="text-warning fw-bold mb-2">{{ label.label }}</h5>
+                            <p class="text-white-50 small mb-0">{{ label.record_count }} records available</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% empty %}
+            <p class="text-white-50">No labels available yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

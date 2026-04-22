@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 mt-5">
+    <div class="mb-4">
+        <h1 class="text-white fw-black text-uppercase mb-1">Artists</h1>
+        <p class="text-white-50 mb-0">Explore all artists currently stocked in the catalogue.</p>
+    </div>
+
+    <div class="row g-3">
+        {% for artist in artists %}
+            <div class="col-md-6 col-lg-4">
+                <a href="{% url 'artist_detail' artist.artist %}" class="text-decoration-none">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-body">
+                            <h5 class="text-warning fw-bold mb-2">{{ artist.artist }}</h5>
+                            <p class="text-white-50 small mb-0">{{ artist.record_count }} records available</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% empty %}
+            <p class="text-white-50">No artists available yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

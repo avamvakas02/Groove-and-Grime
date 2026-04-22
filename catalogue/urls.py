@@ -13,6 +13,8 @@ urlpatterns = [
     path('labels/<str:label_name>/', views.label_detail, name='label_detail'),
     path('editorial/', views.editorial, name='editorial'),
     path('register/', views.register, name='register'),
+    path('profile/', views.profile, name='profile'),
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
     
     # --- Authentication ---
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
