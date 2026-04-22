@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Category, VinylRecord, User
+from .models import Category, VinylRecord, User, Review
 
 # Register the Custom User Model so you can edit Tiers in the Admin
 class CustomUserAdmin(UserAdmin):
@@ -13,5 +13,4 @@ class CustomUserAdmin(UserAdmin):
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Category)
 admin.site.register(VinylRecord)
-
-# REMOVED: admin.site.register(Review) <- This was causing the crash
+admin.site.register(Review)

@@ -25,6 +25,7 @@ urlpatterns = [
     path('cart/add/<int:record_id>/', views.cart_add, name='cart_add'),
     path('cart/update/<int:record_id>/', views.cart_update_quantity, name='cart_update_quantity'),
     path('cart/remove/<int:record_id>/', views.cart_remove, name='cart_remove'),
+    path('records/<int:record_id>/review/', views.save_review, name='save_review'),
 
     # --- Manager dashboard ---
     path('manager/dashboard/', views.manager_dashboard, name='manager_dashboard'),

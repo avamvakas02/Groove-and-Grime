@@ -118,3 +118,23 @@ class VinylRecord(models.Model):
     def __str__(self):
         """Readable record label used in admin and debugging."""
         return f"{self.artist} - {self.title}"
+
+
+class Review(models.Model):
+    """User rating/review for a vinyl record."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    record = models.ForeignKey(VinylRecord, on_delete=models.CASCADE, related_name='reviews')
+    rating = models.PositiveSmallIntegerField()
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'record'], name='unique_user_record_review'),
+            models.CheckConstraint(condition=models.Q(rating__gte=1) & models.Q(rating__lte=5), name='rating_between_1_and_5'),
+        ]
+        ordering = ['-updated_at']
+
+    def __str__(self):
+        return f"{self.user.username} rated {self.record} ({self.rating}/5)"

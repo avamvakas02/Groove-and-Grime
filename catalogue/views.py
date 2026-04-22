@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Avg
 from django.contrib.auth import login
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
-from .models import VinylRecord, Category, User
+from .models import VinylRecord, Category, User, Review
 from .forms import (
     RegisterForm,
     VinylRecordForm,
@@ -15,6 +15,67 @@ from .forms import (
 )
 from .cart import Cart
 from .decorators import manager_required, purchase_access_required, has_pro_plus_access
+
+
+def _visibility_filtered_records(user):
+    """Base record queryset respecting Pro+ exclusive visibility."""
+    records = VinylRecord.objects.all()
+    if not has_pro_plus_access(user):
+        records = records.filter(is_exclusive=False)
+    return records
+
+
+def _build_recommendations(user, seed_records, base_records, limit=6):
+    """
+    Recommend records using content similarity and optional user-history boost.
+    Similarity uses category/artist/label overlap.
+    History boost uses the user's high-rated (4-5 stars) records.
+    """
+    candidates = list(base_records.exclude(id__in=[record.id for record in seed_records]))
+    if not candidates:
+        return []
+
+    seed_categories = {record.category_id for record in seed_records}
+    seed_artists = {record.artist for record in seed_records}
+    seed_labels = {record.label for record in seed_records}
+
+    preferred_categories = set()
+    preferred_artists = set()
+    preferred_labels = set()
+    if user.is_authenticated:
+        high_rated_reviews = (
+            Review.objects
+            .filter(user=user, rating__gte=4)
+            .select_related('record')
+        )
+        preferred_categories = {review.record.category_id for review in high_rated_reviews}
+        preferred_artists = {review.record.artist for review in high_rated_reviews}
+        preferred_labels = {review.record.label for review in high_rated_reviews}
+
+    scored = []
+    for record in candidates:
+        score = 0
+        if record.category_id in seed_categories:
+            score += 3
+        if record.artist in seed_artists:
+            score += 2
+        if record.label in seed_labels:
+            score += 1
+
+        # Boost from user's high-rated history.
+        if record.category_id in preferred_categories:
+            score += 4
+        if record.artist in preferred_artists:
+            score += 3
+        if record.label in preferred_labels:
+            score += 2
+
+        if score > 0:
+            scored.append((score, record))
+
+    scored.sort(key=lambda row: (-row[0], -row[1].created_at.timestamp()))
+    return [row[1] for row in scored[:limit]]
+
 
 def _cart_totals_context(request, cart):
     """Build cart totals and discount metadata for template/JSON responses."""
@@ -84,7 +145,7 @@ def collection(request):
     )
     conditions = [choice[0] for choice in VinylRecord.CONDITION_CHOICES]
 
-    records = VinylRecord.objects.all()
+    records = _visibility_filtered_records(request.user)
 
     # Full-text-ish search on key record descriptors.
     if query:
@@ -113,12 +174,41 @@ def collection(request):
         except Exception:
             messages.warning(request, "Invalid maximum price filter ignored.")
 
-    # Hide exclusive records for guests and lower tiers.
-    if not has_pro_plus_access(request.user):
-        records = records.filter(is_exclusive=False)
+    records = records.distinct()
+
+    records_with_stats = list(records.annotate(
+        average_rating=Avg('reviews__rating'),
+        review_count=Count('reviews'),
+    ).order_by('-created_at'))
+
+    if request.user.is_authenticated:
+        review_map = {
+            review.record_id: review
+            for review in Review.objects.filter(user=request.user, record__in=records)
+        }
+    else:
+        review_map = {}
+
+    for record in records_with_stats:
+        user_review = review_map.get(record.id)
+        record.current_user_rating = user_review.rating if user_review else 0
+        record.current_user_comment = user_review.comment if user_review else ''
+
+    # Seed recommender with visible filtered records first, fallback to latest records.
+    seed_records = records_with_stats[:8]
+    if not seed_records:
+        seed_records = list(_visibility_filtered_records(request.user).order_by('-created_at')[:8])
+    recommended_records = _build_recommendations(
+        request.user,
+        seed_records=seed_records,
+        base_records=_visibility_filtered_records(request.user),
+        limit=6,
+    )
 
     context = {
-        'records': records.distinct().order_by('-created_at'),
+        'records': records_with_stats,
+        'record_count': len(records_with_stats),
+        'recommended_records': recommended_records,
         'categories': categories,
         'labels': labels,
         'conditions': conditions,
@@ -130,6 +220,44 @@ def collection(request):
         'max_price': max_price,
     }
     return render(request, 'collection.html', context)
+
+
+@require_POST
+@login_required
+def save_review(request, record_id):
+    """Create or update a logged-in user's star rating/review via AJAX."""
+    record = get_object_or_404(VinylRecord, id=record_id)
+    try:
+        rating = int(request.POST.get('rating', '0'))
+    except ValueError:
+        return JsonResponse({'ok': False, 'message': 'Invalid rating value.'}, status=400)
+
+    comment = request.POST.get('comment', '').strip()
+    if rating < 1 or rating > 5:
+        return JsonResponse({'ok': False, 'message': 'Rating must be between 1 and 5.'}, status=400)
+
+    review, _created = Review.objects.update_or_create(
+        user=request.user,
+        record=record,
+        defaults={
+            'rating': rating,
+            'comment': comment,
+        },
+    )
+
+    aggregate = Review.objects.filter(record=record).aggregate(
+        average_rating=Avg('rating'),
+        review_count=Count('id'),
+    )
+    return JsonResponse({
+        'ok': True,
+        'message': 'Your review has been saved.',
+        'record_id': record.id,
+        'user_rating': review.rating,
+        'user_comment': review.comment,
+        'average_rating': round(aggregate['average_rating'] or 0, 2),
+        'review_count': aggregate['review_count'] or 0,
+    })
 
 
 def artists(request):
