@@ -24,7 +24,7 @@
             <tbody>
                 {% for record in records %}
                 <tr>
-                    <td><img src="{{ record.image.url }}" style="height: 40px; width: 40px; object-fit: cover;"></td>
+                    <td><img src="{{ record.image_display_url }}" style="height: 40px; width: 40px; object-fit: cover;"></td>
                     <td>
                         <span class="text-warning small d-block">{{ record.artist }}</span>
                         <span class="text-white fw-bold">{{ record.title }}</span>

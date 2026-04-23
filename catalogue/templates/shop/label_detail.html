@@ -14,9 +14,7 @@
         {% for record in records %}
             <div class="col-md-6 col-lg-4">
                 <div class="card bg-dark border-secondary h-100">
-                    {% if record.image %}
-                        <img src="{{ record.image.url }}" class="card-img-top" alt="{{ record.title }}" style="height: 220px; object-fit: cover;">
-                    {% endif %}
+                    <img src="{{ record.image_display_url }}" class="card-img-top" alt="{{ record.title }}" style="height: 220px; object-fit: cover;">
                     <div class="card-body">
                         <h5 class="text-white mb-1">{{ record.title }}</h5>
                         <p class="text-white-50 small mb-1">Artist: <a href="{% url 'artist_detail' record.artist %}" class="text-warning text-decoration-none">{{ record.artist }}</a></p>

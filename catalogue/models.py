@@ -3,6 +3,7 @@
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.templatetags.static import static
 
 
 # --- Custom user model ---
@@ -123,6 +124,21 @@ class VinylRecord(models.Model):
 
     def __str__(self):
         return f"{self.artist} - {self.title}"
+
+    @property
+    def image_display_url(self):
+        """Return a safe image URL for both media uploads and static seed paths."""
+        if not self.image:
+            return static('images/limited-edition.png')
+
+        image_name = (self.image.name or '').strip()
+        if image_name.startswith(('vinyls/', 'images/')):
+            return static(image_name)
+
+        try:
+            return self.image.url
+        except Exception:
+            return static('images/limited-edition.png')
 
 
 # --- Review model ---

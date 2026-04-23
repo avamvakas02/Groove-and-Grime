@@ -27,11 +27,9 @@ Handles quantity updates and item removal, all wired up to cart.js for AJAX upda
         {# Each row has a data-cart-row attribute so cart.js can find and remove it if quantity hits 0 #}
         <div class="list-group-item bg-dark text-light border-secondary d-flex flex-column flex-md-row align-items-md-center gap-3 py-3" data-cart-row="{{ item.record.id }}">
 
-            {% if item.record.image %}
             <a href="{% url 'collection' %}" class="flex-shrink-0">
-                <img src="{{ item.record.image.url }}" alt="" width="72" height="72" class="rounded-0 object-fit-cover" style="object-fit: cover;">
+                <img src="{{ item.record.image_display_url }}" alt="" width="72" height="72" class="rounded-0 object-fit-cover" style="object-fit: cover;">
             </a>
-            {% endif %}
 
             <div class="flex-grow-1">
                 <div class="text-warning text-uppercase small fw-bold mb-1">{{ item.record.artist }}</div>

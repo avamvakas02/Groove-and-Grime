@@ -23,9 +23,7 @@
         <div class="col">
             <div class="card bg-dark border-secondary overflow-hidden h-100">
 
-                {% if record.image %}
-                <img src="{{ record.image.url }}" class="card-img-top" alt="{{ record.title }}" style="aspect-ratio: 1/1; object-fit: cover; width: 100%;">
-                {% endif %}
+                <img src="{{ record.image_display_url }}" class="card-img-top" alt="{{ record.title }}" style="aspect-ratio: 1/1; object-fit: cover; width: 100%;">
 
                 <div class="card-body d-flex flex-column position-relative">
 
