@@ -44,6 +44,46 @@ body {
     color: var(--accent-gold) !important;
 }
 
+.profile-dropdown-menu {
+    border: 1px solid var(--border-color);
+    min-width: 12rem;
+}
+
+.profile-dropdown-menu .dropdown-item {
+    color: var(--text-pure);
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+}
+
+.profile-dropdown-menu .dropdown-item:hover,
+.profile-dropdown-menu .dropdown-item:focus,
+.profile-dropdown-menu .dropdown-item.active {
+    background-color: rgba(255, 193, 7, 0.12);
+    color: var(--accent-gold);
+}
+
+.wishlist-heart-btn {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.wishlist-heart-btn i.bi-heart,
+.wishlist-heart-btn i.bi-heart-fill {
+    color: var(--accent-gold) !important;
+}
+
+.wishlist-heart-btn i.bi-heart {
+    opacity: 0.7;
+}
+
+.wishlist-heart-btn:hover i.bi-heart,
+.wishlist-heart-btn:hover i.bi-heart-fill {
+    color: var(--accent-gold) !important;
+    opacity: 1;
+}
+
 /* --- HEADINGS --- */
 h1, h2, h3, h4, h5, h6 {
     color: var(--text-pure) !important;

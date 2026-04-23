@@ -53,8 +53,16 @@
                 {% endif %}
                 
                 {% if user.is_authenticated %}
-                    <li class="nav-item px-2">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'edit_profile' %}active{% endif %}" href="{% url 'profile' %}">Profile</a>
+                    <li class="nav-item px-2 dropdown">
+                        <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'edit_profile' or request.resolver_match.url_name == 'wishlist' or request.resolver_match.url_name == 'my_reviews' or request.resolver_match.url_name == 'faq' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Profile
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark profile-dropdown-menu">
+                            <li><a class="dropdown-item {% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'edit_profile' %}active{% endif %}" href="{% url 'profile' %}">My Account</a></li>
+                            <li><a class="dropdown-item {% if request.resolver_match.url_name == 'wishlist' %}active{% endif %}" href="{% url 'wishlist' %}">Wishlist</a></li>
+                            <li><a class="dropdown-item {% if request.resolver_match.url_name == 'my_reviews' %}active{% endif %}" href="{% url 'my_reviews' %}">Reviews</a></li>
+                            <li><a class="dropdown-item {% if request.resolver_match.url_name == 'faq' %}active{% endif %}" href="{% url 'faq' %}">FAQ</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item d-flex align-items-center ms-lg-3 ps-lg-4 border-start border-secondary">
                         <div class="text-end me-3">

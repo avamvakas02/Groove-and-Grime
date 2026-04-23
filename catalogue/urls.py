@@ -15,6 +15,11 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('profile/', views.profile, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
+    path('wishlist/', views.wishlist, name='wishlist'),
+    path('wishlist/add/<int:record_id>/', views.wishlist_add, name='wishlist_add'),
+    path('wishlist/remove/<int:record_id>/', views.wishlist_remove, name='wishlist_remove'),
+    path('reviews/', views.my_reviews, name='my_reviews'),
+    path('faq/', views.faq, name='faq'),
     
     # --- Authentication ---
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),

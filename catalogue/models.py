@@ -138,3 +138,19 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.user.username} rated {self.record} ({self.rating}/5)"
+
+
+class WishlistItem(models.Model):
+    """Stores records a user has added to their wishlist."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlist_items')
+    record = models.ForeignKey(VinylRecord, on_delete=models.CASCADE, related_name='wishlisted_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'record'], name='unique_user_record_wishlist_item'),
+        ]
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} wishlisted {self.record}"

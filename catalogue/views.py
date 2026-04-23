@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
-from .models import VinylRecord, Category, User, Review
+from .models import VinylRecord, Category, User, Review, WishlistItem
 from .forms import (
     RegisterForm,
     VinylRecordForm,
@@ -186,13 +186,20 @@ def collection(request):
             review.record_id: review
             for review in Review.objects.filter(user=request.user, record__in=records)
         }
+        wishlisted_record_ids = set(
+            WishlistItem.objects
+            .filter(user=request.user, record__in=records)
+            .values_list('record_id', flat=True)
+        )
     else:
         review_map = {}
+        wishlisted_record_ids = set()
 
     for record in records_with_stats:
         user_review = review_map.get(record.id)
         record.current_user_rating = user_review.rating if user_review else 0
         record.current_user_comment = user_review.comment if user_review else ''
+        record.is_wishlisted = record.id in wishlisted_record_ids
 
     # Seed recommender with visible filtered records first, fallback to latest records.
     seed_records = records_with_stats[:8]
@@ -547,6 +554,72 @@ def change_membership(request, tier):
 def profile(request):
     """Display current user profile details."""
     return render(request, 'profile.html')
+
+
+@login_required
+def wishlist(request):
+    """Display wishlist page entry point for logged-in users."""
+    wishlisted_records = list(
+        _visibility_filtered_records(request.user)
+        .filter(wishlisted_by__user=request.user)
+        .annotate(
+            average_rating=Avg('reviews__rating'),
+            review_count=Count('reviews'),
+        )
+        .distinct()
+        .order_by('-wishlisted_by__created_at')
+    )
+
+    review_map = {
+        review.record_id: review
+        for review in Review.objects.filter(user=request.user, record__in=wishlisted_records)
+    }
+
+    for record in wishlisted_records:
+        user_review = review_map.get(record.id)
+        record.current_user_rating = user_review.rating if user_review else 0
+        record.current_user_comment = user_review.comment if user_review else ''
+        record.is_wishlisted = True
+
+    return render(request, 'wishlist.html', {'records': wishlisted_records})
+
+
+@login_required
+def my_reviews(request):
+    """Display all reviews submitted by the current user."""
+    user_reviews = (
+        Review.objects
+        .filter(user=request.user)
+        .select_related('record')
+        .order_by('-updated_at')
+    )
+    return render(request, 'my_reviews.html', {'user_reviews': user_reviews})
+
+
+@login_required
+@require_POST
+def wishlist_add(request, record_id):
+    """Add a record to the current user's wishlist."""
+    record = get_object_or_404(VinylRecord, id=record_id)
+    WishlistItem.objects.get_or_create(user=request.user, record=record)
+    messages.success(request, f"'{record.title}' added to your wishlist.")
+    return redirect(request.POST.get('next') or 'collection')
+
+
+@login_required
+@require_POST
+def wishlist_remove(request, record_id):
+    """Remove a record from the current user's wishlist."""
+    record = get_object_or_404(VinylRecord, id=record_id)
+    WishlistItem.objects.filter(user=request.user, record=record).delete()
+    messages.info(request, f"'{record.title}' removed from your wishlist.")
+    return redirect(request.POST.get('next') or 'wishlist')
+
+
+@login_required
+def faq(request):
+    """Display frequently asked questions page for account/store topics."""
+    return render(request, 'faq.html')
 
 
 @login_required

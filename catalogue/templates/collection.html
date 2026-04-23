@@ -105,7 +105,20 @@
                         <img src="{{ record.image.url }}" class="card-img-top" alt="{{ record.title }}" style="aspect-ratio: 1/1; object-fit: cover; width: 100%;">
                         {% endif %}
                         
-                        <div class="card-body d-flex flex-column">
+                        <div class="card-body d-flex flex-column position-relative">
+                            {% if user.is_authenticated %}
+                            <form method="post" action="{% if record.is_wishlisted %}{% url 'wishlist_remove' record.id %}{% else %}{% url 'wishlist_add' record.id %}{% endif %}" class="wishlist-form position-absolute top-0 end-0 mt-2 me-2">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                                <button type="submit" class="btn btn-link p-0 text-decoration-none wishlist-heart-btn" aria-label="{% if record.is_wishlisted %}Remove from wishlist{% else %}Add to wishlist{% endif %}">
+                                    {% if record.is_wishlisted %}
+                                        <i class="bi bi-heart-fill"></i>
+                                    {% else %}
+                                        <i class="bi bi-heart"></i>
+                                    {% endif %}
+                                </button>
+                            </form>
+                            {% endif %}
                             <h6 class="text-warning mb-1 fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;">
                                 {{ record.artist }}
                             </h6>
