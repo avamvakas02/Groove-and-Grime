@@ -3,6 +3,11 @@ from django.db import migrations
 
 def reconcile_review_schema(apps, schema_editor):
     connection = schema_editor.connection
+    if connection.vendor != 'sqlite':
+        # This reconciliation migration targets legacy SQLite-only schema drift.
+        # Postgres/MySQL deployments already get the correct Review schema via 0004.
+        return
+
     table_name = 'catalogue_review'
 
     with connection.cursor() as cursor:
