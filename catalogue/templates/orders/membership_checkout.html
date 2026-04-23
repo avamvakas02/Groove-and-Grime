@@ -6,11 +6,10 @@
     <div class="row justify-content-center">
         <div class="col-lg-7 col-xl-6">
             <div class="pricing-card p-4 p-md-5 shadow-lg">
+
                 <h6 class="text-warning text-uppercase fw-bold mb-2">Plan Change</h6>
                 <h1 class="h3 text-white fw-black mb-2">Complete your {{ target_tier_label }} upgrade</h1>
-                <p class="text-white-50 mb-4">
-                    Enter your card details to confirm the membership change.
-                </p>
+                <p class="text-white-50 mb-4">Enter your card details to confirm the membership change.</p>
 
                 <form method="post" novalidate>
                     {% csrf_token %}
@@ -22,6 +21,7 @@
                     {% endif %}
 
                     <div class="mb-3">
+                        {# I use id_for_label to properly connect each label to its Django-generated input #}
                         <label for="{{ form.cardholder_name.id_for_label }}" class="form-label text-white-50">Cardholder name</label>
                         {{ form.cardholder_name }}
                         {% if form.cardholder_name.errors %}
@@ -37,6 +37,7 @@
                         {% endif %}
                     </div>
 
+                    {# Expiry and CVV sit side by side on medium screens and above #}
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="{{ form.expiry_date.id_for_label }}" class="form-label text-white-50">Expiry date</label>
@@ -61,8 +62,14 @@
                         <a href="{% url 'pricing' %}" class="btn btn-outline-light rounded-pill">Cancel</a>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script src="{% static 'js/card-input-formatting.js' %}"></script>
 {% endblock %}

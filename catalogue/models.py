@@ -1,8 +1,11 @@
+# models.py — Defines all the database models for Groove & Grime
+# I have four main models here: User, Category, VinylRecord, Review, and WishlistItem
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 # --- Custom user model ---
-# We extend Django's default user so every account has a membership tier.
 
 class User(AbstractUser):
     """Application user with a membership tier used for access and pricing."""
@@ -13,15 +16,15 @@ class User(AbstractUser):
         ('MANAGER', 'Manager'),
         ('ADMIN', 'Admin'),
     )
-    
+
     tier = models.CharField(
-        max_length=10, 
-        choices=TIER_CHOICES, 
+        max_length=10,
+        choices=TIER_CHOICES,
         default='VISITOR',
         help_text="Determines user access level and exclusive discounts."
     )
 
-    # Core perks that define the Pro experience on the storefront.
+    # I store these as class-level tuples so I can reference them in templates via context processors
     PRO_PRIVILEGES = (
         "Purchase records (single and bulk orders)",
         "Full-length previews before buying",
@@ -51,29 +54,25 @@ class User(AbstractUser):
     )
 
     def __str__(self):
-        """Show username and tier in admin/list displays."""
         return f"{self.username} ({self.tier_label})"
 
     @property
     def tier_label(self):
-        """Display a friendly tier label with explicit admin priority."""
+        """Returns a friendly tier label, giving superusers the Admin label explicitly."""
         if self.is_superuser or self.tier == 'ADMIN':
             return "Admin"
         return self.get_tier_display()
 
     @property
     def is_pro_member(self):
-        """
-        True when the account has Pro-level storefront access.
-        Pro+ and Manager include all Pro privileges.
-        """
+        """True when the account has Pro-level access or higher."""
         if self.is_superuser or self.is_staff:
             return True
         return self.tier in {'PRO', 'PRO_PLUS', 'MANAGER', 'ADMIN'}
 
     @property
     def is_pro_plus_member(self):
-        """True when the account has top-tier Pro+ storefront access."""
+        """True when the account has Pro+ access or higher."""
         if self.is_superuser or self.is_staff:
             return True
         return self.tier in {'PRO_PLUS', 'MANAGER', 'ADMIN'}
@@ -82,22 +81,21 @@ class User(AbstractUser):
 # --- Product category model ---
 
 class Category(models.Model):
-    """Groups records into genres/collections used in filtering."""
+    """Groups records into genres/collections used for filtering in the collection view."""
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, null=True)
 
     class Meta:
-        verbose_name_plural = "Categories"
+        verbose_name_plural = "Categories"  # Fixes the default "Categorys" label in Django admin
 
     def __str__(self):
-        """Readable category name in admin and templates."""
         return self.name
 
 
 # --- Vinyl inventory model ---
 
 class VinylRecord(models.Model):
-    """Main product model for records displayed in collection and cart."""
+    """Main product model for records displayed in the collection, cart, and wishlist."""
     CONDITION_CHOICES = (
         ('Mint', 'Mint (M)'),
         ('Near Mint', 'Near Mint (NM)'),
@@ -114,22 +112,23 @@ class VinylRecord(models.Model):
     description = models.TextField()
     image = models.ImageField(upload_to='records/', blank=True, null=True)
     stock = models.PositiveIntegerField(default=1)
-    
-    # Exclusive records are hidden from lower tiers in collection view logic.
+
+    # If this is checked, the record is hidden from Visitor and Pro users in the collection view
     is_exclusive = models.BooleanField(
-        default=False, 
+        default=False,
         help_text="If checked, only Pro+ and Managers can see this record."
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        """Readable record label used in admin and debugging."""
         return f"{self.artist} - {self.title}"
 
 
+# --- Review model ---
+
 class Review(models.Model):
-    """User rating/review for a vinyl record."""
+    """Stores a user's star rating and optional comment for a vinyl record."""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
     record = models.ForeignKey(VinylRecord, on_delete=models.CASCADE, related_name='reviews')
     rating = models.PositiveSmallIntegerField()
@@ -139,7 +138,9 @@ class Review(models.Model):
 
     class Meta:
         constraints = [
+            # I enforce one review per user per record at the database level
             models.UniqueConstraint(fields=['user', 'record'], name='unique_user_record_review'),
+            # I also make sure ratings can only be between 1 and 5
             models.CheckConstraint(condition=models.Q(rating__gte=1) & models.Q(rating__lte=5), name='rating_between_1_and_5'),
         ]
         ordering = ['-updated_at']
@@ -148,14 +149,17 @@ class Review(models.Model):
         return f"{self.user.username} rated {self.record} ({self.rating}/5)"
 
 
+# --- Wishlist model ---
+
 class WishlistItem(models.Model):
-    """Stores records a user has added to their wishlist."""
+    """Stores records a user has saved to their wishlist for later."""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wishlist_items')
     record = models.ForeignKey(VinylRecord, on_delete=models.CASCADE, related_name='wishlisted_by')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
+            # I prevent the same record from being added to the same user's wishlist twice
             models.UniqueConstraint(fields=['user', 'record'], name='unique_user_record_wishlist_item'),
         ]
         ordering = ['-created_at']

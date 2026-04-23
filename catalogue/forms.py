@@ -1,3 +1,5 @@
+# forms.py — All the forms used across the site, from registration to checkout
+
 from datetime import datetime
 
 from django import forms
@@ -5,12 +7,13 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm
 from .models import User, VinylRecord
 
+
 # --- 1. User registration form ---
 
 class RegisterForm(UserCreationForm):
     """
     Custom registration form built on top of Django's UserCreationForm.
-    We collect email and force new accounts to start as VISITOR.
+    I collect email and force new accounts to start as VISITOR.
     """
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={
         'class': 'form-control bg-dark text-white border-secondary',
@@ -23,7 +26,7 @@ class RegisterForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Style inherited username input so it matches the site's dark theme.
+        # I style the inherited username field here since I can't set its widget attrs in Meta
         self.fields['username'].widget.attrs.update({
             'class': 'form-control bg-dark text-white border-secondary',
             'placeholder': 'Choose a username'
@@ -32,7 +35,7 @@ class RegisterForm(UserCreationForm):
     def save(self, commit=True):
         """Persist user and enforce default tier for new registrations."""
         user = super().save(commit=False)
-        user.tier = 'VISITOR'
+        user.tier = 'VISITOR'  # Every new account starts as Visitor no matter what
         if commit:
             user.save()
         return user
@@ -41,17 +44,14 @@ class RegisterForm(UserCreationForm):
 # --- 2. Manager inventory form ---
 
 class VinylRecordForm(forms.ModelForm):
-    """
-    Form used by managers to create or edit inventory records.
-    """
+    """Form used by managers to create or edit vinyl records in the inventory."""
     class Meta:
         model = VinylRecord
         fields = [
             'title', 'artist', 'label', 'category', 'price',
             'condition', 'description', 'image', 'stock', 'is_exclusive'
         ]
-        
-        # Widget classes keep UI consistent with Bootstrap + dark theme.
+        # I define all widgets here so every input matches the dark Bootstrap theme
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
             'artist': forms.TextInput(attrs={'class': 'form-control bg-dark text-white border-secondary'}),
@@ -67,9 +67,11 @@ class VinylRecordForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Friendlier label on manager dashboard form.
+        # I override the label to make it obvious what "exclusive" means in this context
         self.fields['is_exclusive'].label = "Pro+ Exclusive (Only visible to higher tiers)"
 
+
+# --- 3. Membership upgrade payment form ---
 
 class MembershipPaymentForm(forms.Form):
     """Collect basic card details before upgrading membership."""
@@ -100,6 +102,7 @@ class MembershipPaymentForm(forms.Form):
     )
     cvv = forms.CharField(
         max_length=4,
+        # I use PasswordInput so the CVV is masked while the user types it
         widget=forms.PasswordInput(attrs={
             'class': 'form-control bg-dark text-white border-secondary',
             'placeholder': 'CVV',
@@ -110,6 +113,7 @@ class MembershipPaymentForm(forms.Form):
 
     def clean_card_number(self):
         raw = self.cleaned_data['card_number']
+        # I strip out any spaces or dashes the user might have typed
         digits_only = ''.join(ch for ch in raw if ch.isdigit())
         if len(digits_only) < 13 or len(digits_only) > 19:
             raise ValidationError("Please enter a valid card number.")
@@ -117,15 +121,16 @@ class MembershipPaymentForm(forms.Form):
 
     def clean_expiry_date(self):
         raw = self.cleaned_data['expiry_date'].strip()
-        if len(raw) != 5 or raw[2] != '/':
+        # I extract only the digits so the format doesn't matter as much on input
+        digits_only = ''.join(ch for ch in raw if ch.isdigit())
+        if len(digits_only) != 4:
             raise ValidationError("Expiry date must be in MM/YY format.")
-        month, year = raw.split('/')
-        if not (month.isdigit() and year.isdigit()):
-            raise ValidationError("Expiry date must be in MM/YY format.")
+        month = digits_only[:2]
+        year = digits_only[2:]
         month_num = int(month)
         if month_num < 1 or month_num > 12:
             raise ValidationError("Please enter a valid expiry month.")
-        return raw
+        return f"{month}/{year}"  # I always return in a consistent MM/YY format
 
     def clean_cvv(self):
         raw = self.cleaned_data['cvv'].strip()
@@ -134,8 +139,10 @@ class MembershipPaymentForm(forms.Form):
         return raw
 
 
+# --- 4. Cart checkout form ---
+
 class CartCheckoutForm(forms.Form):
-    """Collect checkout details and validate payment card fields."""
+    """Collect shipping and payment details at checkout."""
     full_name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(attrs={
@@ -204,6 +211,7 @@ class CartCheckoutForm(forms.Form):
 
     def clean_full_name(self):
         value = self.cleaned_data['full_name'].strip()
+        # I require at least two words so the user can't just submit a first name
         if len(value.split()) < 2:
             raise ValidationError("Please enter both first and last name.")
         return value
@@ -224,21 +232,20 @@ class CartCheckoutForm(forms.Form):
 
     def clean_expiry_date(self):
         raw = self.cleaned_data['expiry_date'].strip()
-        if len(raw) != 5 or raw[2] != '/':
+        digits_only = ''.join(ch for ch in raw if ch.isdigit())
+        if len(digits_only) != 4:
             raise ValidationError("Expiry date must be in MM/YY format.")
-        month, year = raw.split('/')
-        if not (month.isdigit() and year.isdigit()):
-            raise ValidationError("Expiry date must be in MM/YY format.")
-
+        month = digits_only[:2]
+        year = digits_only[2:]
         month_num = int(month)
         if month_num < 1 or month_num > 12:
             raise ValidationError("Please enter a valid expiry month.")
-
+        # I also check against today's date to catch expired cards before the order goes through
         current = datetime.now()
         expiry_year = 2000 + int(year)
         if expiry_year < current.year or (expiry_year == current.year and month_num < current.month):
             raise ValidationError("This card appears to be expired.")
-        return raw
+        return f"{month}/{year}"
 
     def clean_cvv(self):
         raw = self.cleaned_data['cvv'].strip()
@@ -246,6 +253,8 @@ class CartCheckoutForm(forms.Form):
             raise ValidationError("Please enter a valid CVV.")
         return raw
 
+
+# --- 5. Profile update form ---
 
 class ProfileUpdateForm(forms.ModelForm):
     """Allow users to edit basic profile fields."""
@@ -271,6 +280,8 @@ class ProfileUpdateForm(forms.ModelForm):
             }),
         }
 
+
+# --- 6. Public contact form ---
 
 class ContactForm(forms.Form):
     """Public contact form for store questions and collaboration inquiries."""

@@ -1,23 +1,30 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% comment %}
+login.html — The login page for Groove & Grime
+I extend base.html so the navbar and footer are included automatically
+{% endcomment %}
+
 {% block extra_css %}
+    {# I load forms.css here so the custom input styles only apply on form pages #}
     <link rel="stylesheet" href="{% static 'css/forms.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="container mt-5 pt-5">
     <div class="row justify-content-center">
-        <div class="col-md-4">
+        <div class="col-md-4"> {# I keep the form narrow so it doesn't stretch across the whole screen #}
             <div class="card bg-dark border-secondary p-4 shadow-lg">
+
                 <div class="text-center mb-4">
                     <h2 class="text-warning fw-bold text-uppercase">Welcome Back</h2>
                     <p class="text-muted small">Enter your credentials to access the vault.</p>
                 </div>
-                
+
                 <form method="POST">
-                    {% csrf_token %}
-                    
+                    {% csrf_token %} {# Django requires this on every POST form to prevent cross-site request forgery #}
+
                     <div class="mb-4">
                         <label class="form-label text-warning small fw-bold text-uppercase">Username</label>
                         <input type="text" name="username" class="form-control" required>
@@ -29,26 +36,29 @@
                     </div>
 
                     <div class="text-end mb-3">
+                        {# I link to Django's built-in password reset flow here #}
                         <a href="{% url 'password_reset' %}" class="small text-warning text-decoration-none fw-bold">Forgot Your Password?</a>
                     </div>
-                    
+
                     {% if form.errors %}
+                        {# I show a generic error instead of specifying which field failed — better for security #}
                         <div class="text-danger small mb-3">Invalid username or password.</div>
                     {% endif %}
-                    
+
                     <button type="submit" class="btn btn-warning w-100 fw-bold py-3 mt-2">LOGIN</button>
                 </form>
-                
+
                 <div class="text-center mt-4">
                     <p class="small text-muted">First time to the Grove? <a href="{% url 'register' %}" class="text-warning text-decoration-none fw-bold">Sign Up</a></p>
+
+                    {# I added a demo credentials box so markers/testers can log in without needing to register #}
                     <div class="mt-3 p-3 border border-secondary rounded text-start bg-black bg-opacity-25">
                         <p class="small text-warning fw-bold mb-2 text-uppercase">Demo Credentials</p>
-                        <p class="small text-muted mb-1"><strong>Admin:</strong>User:admin_gg/Pass:a123v456@</p>
-                        <p class="small text-muted mb-1"><strong>Manager:</strong>User:manager_gg/Pass:AvMngr@!!</p>
-                        <p class="small text-muted mb-1"><strong>Pro:</strong>User:pro_user/Pass:Av!!pro@@</p>
-                        <p class="small text-muted mb-0"><strong>Pro+:</strong>User:pro_plus_user/Pass:Av!!pro+@@</p>
+                        <p class="small text-muted mb-1"><strong>Demo User</strong>User:demo_user/Pass:demo_pass</p>
+
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

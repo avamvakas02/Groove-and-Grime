@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
+{% load static %}
+
 
 {% block content %}
 <div class="container py-5 mt-5">
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-white fw-black text-uppercase">Inventory Management</h2>
         <a href="{% url 'add_vinyl' %}" class="btn btn-warning fw-bold">+ NEW RECORD</a>
     </div>
 
-    <div class="table-responsive">
+    <div class="table-responsive"> {# I wrap the table so it scrolls horizontally on smaller screens #}
         <table class="table table-dark table-hover border-secondary">
             <thead>
                 <tr>
@@ -28,6 +31,7 @@
                     </td>
                     <td>&euro;{{ record.price }}</td>
                     <td>
+                        {# I use two separate forms for increase/decrease so I can pass a different action value to the same view #}
                         <div class="d-flex align-items-center gap-2">
                             <form action="{% url 'update_stock' record.id %}" method="post" class="m-0">
                                 {% csrf_token %}
@@ -43,6 +47,7 @@
                         </div>
                     </td>
                     <td>
+                        {# data-confirm-delete triggers the confirmation popup from confirm_delete.js before the delete goes through #}
                         <a href="{% url 'delete_vinyl' record.id %}" class="btn btn-sm btn-outline-danger" data-confirm-delete="Delete this record?">Delete</a>
                     </td>
                 </tr>
@@ -55,19 +60,5 @@
 
 {% block extra_js %}
     {{ block.super }}
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.addEventListener('click', (event) => {
-                const deleteLink = event.target.closest('[data-confirm-delete]');
-                if (!deleteLink) {
-                    return;
-                }
-
-                const message = deleteLink.getAttribute('data-confirm-delete') || 'Are you sure?';
-                if (!window.confirm(message)) {
-                    event.preventDefault();
-                }
-            });
-        });
-    </script>
+    <script src="{% static 'js/dashboard-delete-confirm.js' %}"></script>
 {% endblock %}

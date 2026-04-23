@@ -1,12 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% comment %}
+cart.html — Shows the user's current cart (called "crate" on the site)
+Handles quantity updates and item removal, all wired up to cart.js for AJAX updates
+{% endcomment %}
+
 {% block content %}
 <div class="container mt-5 pt-4 pb-5">
+
     <div class="d-flex justify-content-between align-items-end mb-4">
         <div>
             <h2 class="text-white fw-black text-uppercase mb-0">Your crate</h2>
-            <p class="text-muted small mb-0"><span data-cart-count>{{ cart|length }}</span> item<span data-cart-count-suffix>{% if cart|length != 1 %}s{% endif %}</span></p>
+            {# data-cart-count and data-cart-count-suffix are updated by cart.js when quantities change #}
+            <p class="text-muted small mb-0">
+                <span data-cart-count>{{ cart|length }}</span> item<span data-cart-count-suffix>{% if cart|length != 1 %}s{% endif %}</span>
+            </p>
         </div>
         <a href="{% url 'collection' %}" class="btn btn-outline-warning btn-sm rounded-0 fw-bold">Keep digging</a>
     </div>
@@ -14,17 +23,26 @@
     {% if cart|length %}
     <div class="list-group list-group-flush border border-secondary rounded-0">
         {% for item in cart %}
+
+        {# Each row has a data-cart-row attribute so cart.js can find and remove it if quantity hits 0 #}
         <div class="list-group-item bg-dark text-light border-secondary d-flex flex-column flex-md-row align-items-md-center gap-3 py-3" data-cart-row="{{ item.record.id }}">
+
             {% if item.record.image %}
             <a href="{% url 'collection' %}" class="flex-shrink-0">
                 <img src="{{ item.record.image.url }}" alt="" width="72" height="72" class="rounded-0 object-fit-cover" style="object-fit: cover;">
             </a>
             {% endif %}
+
             <div class="flex-grow-1">
                 <div class="text-warning text-uppercase small fw-bold mb-1">{{ item.record.artist }}</div>
                 <div class="text-white fw-bold">{{ item.record.title }}</div>
-                <div class="text-white-50 small">&euro;{{ item.price }} &times; <span data-cart-quantity>{{ item.quantity }}</span> = <span class="text-white">&euro;<span data-cart-line-total>{{ item.total_price }}</span></span></div>
+                {# I show the price breakdown per line — unit price × quantity = line total #}
+                <div class="text-white-50 small">
+                    &euro;{{ item.price }} &times; <span data-cart-quantity>{{ item.quantity }}</span> = <span class="text-white">&euro;<span data-cart-line-total>{{ item.total_price }}</span></span>
+                </div>
             </div>
+
+            {# I use two separate forms for + and - so I can pass a different action value to the same view #}
             <div class="d-flex align-items-center gap-2">
                 <form action="{% url 'cart_update_quantity' item.record.id %}" method="post" class="m-0" data-cart-form>
                     {% csrf_token %}
@@ -38,37 +56,46 @@
                     <button type="submit" class="btn btn-outline-warning btn-sm rounded-0 fw-bold">+</button>
                 </form>
             </div>
+
             <form action="{% url 'cart_remove' item.record.id %}" method="post" class="m-0" data-cart-form>
                 {% csrf_token %}
                 <button type="submit" class="btn btn-outline-danger btn-sm rounded-0 fw-bold">Remove</button>
             </form>
+
         </div>
         {% endfor %}
     </div>
+
+    {# Order summary section — all the data- attributes here are updated live by cart.js #}
     <div class="mt-4 pt-3 border-top border-secondary">
         <div class="d-flex justify-content-between align-items-center">
             <span class="text-white-50 text-uppercase small fw-bold">Subtotal</span>
             <span class="text-white fw-bold">&euro;<span data-cart-subtotal>{{ subtotal|floatformat:2 }}</span></span>
         </div>
+
+        {# I hide this row entirely if no discount applies — cart.js toggles d-none based on the discount value #}
         <div class="d-flex justify-content-between align-items-center mt-2 {% if discount_rate == 0 %}d-none{% endif %}" data-cart-discount-row>
             <span class="text-success text-uppercase small fw-bold">Member Discount ({{ discount_percent }}%)</span>
             <span class="text-success fw-bold">-&euro;<span data-cart-discount>{{ discount_amount|floatformat:2 }}</span></span>
         </div>
+
         <div class="d-flex justify-content-between align-items-center mt-3">
             <span class="text-warning text-uppercase fw-black">Total</span>
             <span class="text-warning fw-black" style="font-size: 2rem;">&euro;<span data-cart-total>{{ total_after_discount|floatformat:2 }}</span></span>
         </div>
+
         <div class="mt-4 text-end">
-            <a href="{% url 'cart_checkout' %}" class="btn btn-warning rounded-0 fw-black px-4">
-                Proceed To Checkout
-            </a>
+            <a href="{% url 'cart_checkout' %}" class="btn btn-warning rounded-0 fw-black px-4">Proceed To Checkout</a>
         </div>
     </div>
+
     {% else %}
+    {# Empty state — shown when the user has nothing in their crate #}
     <div class="text-center py-5 border border-secondary bg-dark bg-opacity-50">
         <p class="text-muted mb-3">Your crate is empty.</p>
         <a href="{% url 'collection' %}" class="btn btn-warning rounded-0 fw-black px-4">Shop the collection</a>
     </div>
     {% endif %}
+
 </div>
 {% endblock %}

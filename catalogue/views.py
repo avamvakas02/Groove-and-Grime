@@ -123,7 +123,7 @@ def home(request):
         .annotate(record_count=Count('id'))
         .order_by('-record_count', 'label')[:6]
     )
-    return render(request, 'home.html', {
+    return render(request, 'public/home.html', {
         'top_artists': top_artists,
         'top_labels': top_labels,
     })
@@ -228,7 +228,7 @@ def collection(request):
         'min_price': min_price,
         'max_price': max_price,
     }
-    return render(request, 'collection.html', context)
+    return render(request, 'shop/collection.html', context)
 
 
 @require_POST
@@ -277,13 +277,13 @@ def artists(request):
         .annotate(record_count=Count('id'))
         .order_by('artist')
     )
-    return render(request, 'artists.html', {'artists': artist_rows})
+    return render(request, 'shop/artists.html', {'artists': artist_rows})
 
 
 def artist_detail(request, artist_name):
     """Public artist page listing all records by artist."""
     records = VinylRecord.objects.filter(artist=artist_name).order_by('-created_at')
-    return render(request, 'artist_detail.html', {
+    return render(request, 'shop/artist_detail.html', {
         'artist_name': artist_name,
         'records': records,
     })
@@ -297,13 +297,13 @@ def labels(request):
         .annotate(record_count=Count('id'))
         .order_by('label')
     )
-    return render(request, 'labels.html', {'labels': label_rows})
+    return render(request, 'shop/labels.html', {'labels': label_rows})
 
 
 def label_detail(request, label_name):
     """Public label page listing all records from a label."""
     records = VinylRecord.objects.filter(label=label_name).order_by('-created_at')
-    return render(request, 'label_detail.html', {
+    return render(request, 'shop/label_detail.html', {
         'label_name': label_name,
         'records': records,
     })
@@ -328,12 +328,12 @@ def editorial(request):
             'summary': 'The Groove & Grime team shares opening-hour records with long blends and steady momentum.',
         },
     ]
-    return render(request, 'editorial.html', {'posts': posts})
+    return render(request, 'public/editorial.html', {'posts': posts})
 
 
 def about(request):
     """Display About Us page with store mission and story."""
-    return render(request, 'about.html')
+    return render(request, 'public/about.html')
 
 
 def contact(request):
@@ -349,7 +349,7 @@ def contact(request):
     else:
         form = ContactForm()
 
-    return render(request, 'contact.html', {'form': form})
+    return render(request, 'public/contact.html', {'form': form})
 
 
 # --- 2. Authentication ---
@@ -365,7 +365,7 @@ def register(request):
             return redirect("home")
     else:
         form = RegisterForm()
-    return render(request, "register.html", {"form": form})
+    return render(request, "account/register.html", {"form": form})
 
 
 # --- 3. Cart ("Crate") ---
@@ -376,7 +376,7 @@ def cart_detail(request):
     cart = Cart(request)
     totals = _cart_totals_context(request, cart)
 
-    return render(request, 'cart_detail.html', {
+    return render(request, 'orders/cart_detail.html', {
         'cart': cart,
         **totals,
     })
@@ -482,7 +482,7 @@ def cart_checkout(request):
             'email': request.user.email if request.user.is_authenticated else '',
         })
 
-    return render(request, 'checkout.html', {
+    return render(request, 'orders/checkout.html', {
         'form': form,
         'cart': cart,
         **totals,
@@ -492,7 +492,7 @@ def cart_checkout(request):
 @purchase_access_required
 def payment_success(request):
     """Display payment success confirmation after completed checkout."""
-    return render(request, 'payment_success.html')
+    return render(request, 'orders/payment_success.html')
 
 
 # --- 4. Manager dashboard (front-end management) ---
@@ -553,7 +553,7 @@ def update_stock(request, record_id):
 
 def pricing(request):
     """Display static membership tiers and benefits page."""
-    return render(request, 'pricing.html', {
+    return render(request, 'public/pricing.html', {
         'pro_privileges': User.PRO_PRIVILEGES,
         'pro_plus_privileges': User.PRO_PLUS_PRIVILEGES,
     })
@@ -602,7 +602,7 @@ def change_membership(request, tier):
     else:
         form = MembershipPaymentForm()
 
-    return render(request, 'membership_checkout.html', {
+    return render(request, 'orders/membership_checkout.html', {
         'form': form,
         'target_tier': tier,
         'target_tier_label': dict(User.TIER_CHOICES).get(tier, tier),
@@ -612,7 +612,7 @@ def change_membership(request, tier):
 @login_required
 def profile(request):
     """Display current user profile details."""
-    return render(request, 'profile.html')
+    return render(request, 'account/profile.html')
 
 
 @login_required
@@ -640,7 +640,7 @@ def wishlist(request):
         record.current_user_comment = user_review.comment if user_review else ''
         record.is_wishlisted = True
 
-    return render(request, 'wishlist.html', {'records': wishlisted_records})
+    return render(request, 'community/wishlist.html', {'records': wishlisted_records})
 
 
 @login_required
@@ -652,7 +652,7 @@ def my_reviews(request):
         .select_related('record')
         .order_by('-updated_at')
     )
-    return render(request, 'my_reviews.html', {'user_reviews': user_reviews})
+    return render(request, 'community/my_reviews.html', {'user_reviews': user_reviews})
 
 
 @login_required
@@ -678,7 +678,7 @@ def wishlist_remove(request, record_id):
 @login_required
 def faq(request):
     """Display frequently asked questions page for account/store topics."""
-    return render(request, 'faq.html')
+    return render(request, 'public/faq.html')
 
 
 @login_required
@@ -693,4 +693,4 @@ def edit_profile(request):
     else:
         form = ProfileUpdateForm(instance=request.user)
 
-    return render(request, 'profile.html', {'form': form})
+    return render(request, 'account/profile.html', {'form': form})

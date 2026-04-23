@@ -4,16 +4,19 @@
 <div class="container py-5 mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
+
             <div class="d-flex justify-content-between align-items-center mb-4">
+                {# I use a dynamic title so this same template works for both "Add Record" and "Edit Record" #}
                 <h2 class="text-white fw-black text-uppercase mb-0">{{ title }}</h2>
                 <a href="{% url 'manager_dashboard' %}" class="btn btn-outline-light btn-sm">Back</a>
             </div>
 
             <div class="card bg-dark border-secondary">
                 <div class="card-body p-4">
+                    {# enctype="multipart/form-data" is required here because the form includes an image upload field #}
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        {{ form.non_field_errors }}
+                        {{ form.non_field_errors }} {# I display any errors that aren't tied to a specific field #}
 
                         {% for field in form %}
                         <div class="mb-3">
@@ -28,12 +31,11 @@
                         </div>
                         {% endfor %}
 
-                        <button type="submit" class="btn btn-warning fw-bold text-dark">
-                            Save Record
-                        </button>
+                        <button type="submit" class="btn btn-warning fw-bold text-dark">Save Record</button>
                     </form>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
