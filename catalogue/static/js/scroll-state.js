@@ -1,7 +1,45 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const SCROLL_STATE_KEY = `scroll-state:${window.location.pathname}${window.location.search}`;
+
+    const saveScrollPosition = () => {
+        sessionStorage.setItem(SCROLL_STATE_KEY, String(window.scrollY || window.pageYOffset || 0));
+    };
+
+    const restoreScrollPosition = () => {
+        const saved = sessionStorage.getItem(SCROLL_STATE_KEY);
+        if (saved === null) {
+            return;
+        }
+
+        const y = Number.parseInt(saved, 10);
+        sessionStorage.removeItem(SCROLL_STATE_KEY);
+        if (Number.isNaN(y)) {
+            return;
+        }
+
+        // Run twice to handle delayed content/layout updates after hydration and images.
+        window.requestAnimationFrame(() => window.scrollTo(0, y));
+        window.setTimeout(() => window.scrollTo(0, y), 60);
+    };
+
+    if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+    }
+    restoreScrollPosition();
+
     const cartAddLinks = document.querySelectorAll('a[href*="/cart/add/"]');
     const cartForms = document.querySelectorAll('form[data-cart-form]');
     const cartLink = document.querySelector('a[aria-label="Open crate"]');
+    const preserveScrollLinks = document.querySelectorAll('a[data-preserve-scroll]');
+    const preserveScrollForms = document.querySelectorAll('form[data-preserve-scroll], .wishlist-form, .review-form, form[data-cart-form]');
+
+    preserveScrollLinks.forEach((link) => {
+        link.addEventListener('click', saveScrollPosition);
+    });
+
+    preserveScrollForms.forEach((form) => {
+        form.addEventListener('submit', saveScrollPosition);
+    });
 
     const upsertCartBadge = (itemCount) => {
         if (!cartLink) {
@@ -32,8 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            saveScrollPosition();
             link.dataset.loading = 'true';
             const originalText = link.textContent;
+            const buttonWidth = link.getBoundingClientRect().width;
+            link.style.minWidth = `${buttonWidth}px`;
             link.classList.add('disabled');
 
             try {

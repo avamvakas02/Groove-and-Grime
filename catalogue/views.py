@@ -12,6 +12,7 @@ from .forms import (
     VinylRecordForm,
     MembershipPaymentForm,
     ProfileUpdateForm,
+    ContactForm,
 )
 from .cart import Cart
 from .decorators import manager_required, purchase_access_required, has_pro_plus_access
@@ -327,6 +328,27 @@ def editorial(request):
         },
     ]
     return render(request, 'editorial.html', {'posts': posts})
+
+
+def about(request):
+    """Display About Us page with store mission and story."""
+    return render(request, 'about.html')
+
+
+def contact(request):
+    """Display and handle Contact Us form submissions."""
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            messages.success(
+                request,
+                "Thanks for reaching out. We received your message and will reply to your email soon.",
+            )
+            return redirect('contact')
+    else:
+        form = ContactForm()
+
+    return render(request, 'contact.html', {'form': form})
 
 
 # --- 2. Authentication ---

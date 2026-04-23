@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/other-pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="other-hero" style="background-image: url('{% static 'images/techno.jpg' %}');">
+    <div class="other-hero-overlay">
+        <div class="container py-5">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                    <h6 class="text-warning text-uppercase fw-bold ls-2 mb-3">Contact Us</h6>
+                    <h1 class="display-4 fw-black text-white mb-3">Let us know how we can help</h1>
+                    <p class="lead text-white-50 mb-4">
+                        Questions about orders, memberships, collaborations, or specific releases?
+                        Send us a message and our team will respond by email.
+                    </p>
+                    <a href="#contact-form" class="btn btn-warning px-4 py-2 fw-bold rounded-pill me-2">Send a Message</a>
+                    <a href="{% url 'collection' %}" class="btn btn-outline-light px-4 py-2 fw-bold rounded-pill">Browse Records</a>
+                </div>
+                <div class="col-lg-5">
+                    <div class="other-media-card">
+                        <img src="{% static 'images/limited-edition.png' %}" alt="Vinyl record close-up" class="img-fluid rounded-3">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5" id="contact-form">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="other-feature-card p-4 p-md-5">
+                <h2 class="h3 fw-black text-white mb-3">Write to the Groove & Grime team</h2>
+                <p class="text-white-50 mb-4">Use your email so we can reply directly with support or recommendations.</p>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags|default:'info' }} mb-3" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.full_name.id_for_label }}" class="form-label text-white-50">Full name</label>
+                        {{ form.full_name }}
+                        {% if form.full_name.errors %}
+                            <div class="text-danger small mt-1">{{ form.full_name.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label text-white-50">Email address</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger small mt-1">{{ form.email.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.subject.id_for_label }}" class="form-label text-white-50">Subject</label>
+                        {{ form.subject }}
+                        {% if form.subject.errors %}
+                            <div class="text-danger small mt-1">{{ form.subject.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ form.message.id_for_label }}" class="form-label text-white-50">Message</label>
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                            <div class="text-danger small mt-1">{{ form.message.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-warning px-5 py-2 fw-bold rounded-pill">Submit Message</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="other-feature-card p-4 mb-4">
+                <h3 class="h5 text-warning mb-3">Direct Contact</h3>
+                <p class="mb-2 text-white"><strong>Email:</strong> support@grooveandgrime.com</p>
+                <p class="mb-2 text-white"><strong>Phone:</strong> +30 21 0000 0000</p>
+                <p class="mb-0 text-white"><strong>Address:</strong> 12 Vinyl Lane, Athens, Greece</p>
+            </div>
+            <div class="other-feature-card p-4">
+                <h3 class="h5 text-warning mb-3">Response Times</h3>
+                <p class="text-white-50 mb-2">Support inquiries: within 24 hours</p>
+                <p class="text-white-50 mb-2">Order updates: same business day</p>
+                <p class="text-white-50 mb-0">Collaboration requests: 2-3 business days</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

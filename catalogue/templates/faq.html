@@ -3,22 +3,156 @@
 {% block content %}
 <div class="container mt-5 pt-5 pb-5">
     <div class="row justify-content-center">
-        <div class="col-lg-9">
+        <div class="col-lg-10">
             <div class="card bg-dark border-secondary shadow-lg">
                 <div class="card-body p-4 p-md-5">
-                    <h2 class="text-warning fw-bold text-uppercase mb-4">FAQ</h2>
+                    <h2 class="text-warning fw-bold text-uppercase mb-2">Frequently Asked Questions</h2>
+                    <p class="text-white-50 mb-4">
+                        Everything you need to navigate Groove &amp; Grime, from memberships and crate access to wishlist, reviews, and account help.
+                    </p>
 
-                    <div class="mb-4">
-                        <h5 class="text-white mb-2">How do I add records to wishlist?</h5>
-                        <p class="text-white-50 mb-0">In Collection, click the heart icon on any record card.</p>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="p-3 border border-secondary rounded bg-black bg-opacity-25 h-100">
+                                <h6 class="text-warning text-uppercase mb-2">New Here?</h6>
+                                <p class="text-white-50 small mb-0">
+                                    Start with <a class="link-warning text-decoration-none" href="{% url 'pricing' %}">Pricing</a> to understand Visitor, Pro, and Pro+ access levels.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border border-secondary rounded bg-black bg-opacity-25 h-100">
+                                <h6 class="text-warning text-uppercase mb-2">Need Help Fast?</h6>
+                                <p class="text-white-50 small mb-0">
+                                    Reach us from the <a class="link-warning text-decoration-none" href="{% url 'contact' %}">Contact</a> page for billing or account support.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 border border-secondary rounded bg-black bg-opacity-25 h-100">
+                                <h6 class="text-warning text-uppercase mb-2">Store Story</h6>
+                                <p class="text-white-50 small mb-0">
+                                    Curious about the brand? Visit <a class="link-warning text-decoration-none" href="{% url 'about' %}">About Us</a> for our mission and curation style.
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-4">
-                        <h5 class="text-white mb-2">How do I remove records from wishlist?</h5>
-                        <p class="text-white-50 mb-0">Click the filled heart in Collection or use the Remove button on your Wishlist page.</p>
-                    </div>
-                    <div>
-                        <h5 class="text-white mb-2">Where can I see my reviews?</h5>
-                        <p class="text-white-50 mb-0">Open Profile dropdown and go to Reviews.</p>
+
+                    <div class="accordion accordion-flush" id="faqAccordion">
+                        <div class="accordion-item bg-transparent border border-secondary rounded mb-3">
+                            <h3 class="accordion-header" id="faqHeadingMembership">
+                                <button class="accordion-button collapsed bg-dark text-white fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqMembership" aria-expanded="false" aria-controls="faqMembership">
+                                    Membership &amp; Access
+                                </button>
+                            </h3>
+                            <div id="faqMembership" class="accordion-collapse collapse" aria-labelledby="faqHeadingMembership" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-white-50">
+                                    <h6 class="text-white">What can I do as a Visitor?</h6>
+                                    <p>You can browse the full collection, filter records, and view detailed information. Visitor accounts cannot purchase from the crate.</p>
+
+                                    <h6 class="text-white">What is included in Pro and Pro+?</h6>
+                                    <p>Pro unlocks crate access and purchasing. Pro+ includes everything in Pro plus premium vault-oriented benefits listed on the pricing page.</p>
+
+                                    <h6 class="text-white">How do I upgrade my membership?</h6>
+                                    <p>Go to the Pricing page and choose your tier. If you are signed in, the appropriate upgrade button will guide you through the change.</p>
+
+                                    <h6 class="text-white">Can I downgrade from Pro or Pro+?</h6>
+                                    <p>Downgrades are currently disabled in-app. Use Contact support if you need a plan change review.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item bg-transparent border border-secondary rounded mb-3">
+                            <h3 class="accordion-header" id="faqHeadingCrate">
+                                <button class="accordion-button collapsed bg-dark text-white fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqCrate" aria-expanded="false" aria-controls="faqCrate">
+                                    Crate, Orders &amp; Checkout
+                                </button>
+                            </h3>
+                            <div id="faqCrate" class="accordion-collapse collapse" aria-labelledby="faqHeadingCrate" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-white-50">
+                                    <h6 class="text-white">Why is the crate icon locked or inactive?</h6>
+                                    <p>The crate is fully available for Pro and Pro+ members. Visitor accounts can browse but must upgrade to buy.</p>
+
+                                    <h6 class="text-white">How do I add records to my crate?</h6>
+                                    <p>Open any eligible record and use the add-to-crate action. Your crate badge in the navbar updates with total items.</p>
+
+                                    <h6 class="text-white">Can I update quantities before checkout?</h6>
+                                    <p>Yes. On the crate page, use quantity controls to increase, reduce, or remove records before confirming the order.</p>
+
+                                    <h6 class="text-white">What if a record becomes unavailable?</h6>
+                                    <p>Stock can change quickly for rare releases. If an item is unavailable during checkout, remove it and continue with available records.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item bg-transparent border border-secondary rounded mb-3">
+                            <h3 class="accordion-header" id="faqHeadingCommunity">
+                                <button class="accordion-button collapsed bg-dark text-white fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqCommunity" aria-expanded="false" aria-controls="faqCommunity">
+                                    Wishlist, Reviews &amp; Discovery
+                                </button>
+                            </h3>
+                            <div id="faqCommunity" class="accordion-collapse collapse" aria-labelledby="faqHeadingCommunity" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-white-50">
+                                    <h6 class="text-white">How do I add records to wishlist?</h6>
+                                    <p>In Collection, click the heart icon on any record card. A filled heart means that record is already in your wishlist.</p>
+
+                                    <h6 class="text-white">How do I remove records from wishlist?</h6>
+                                    <p>Click the filled heart again in Collection, or remove items directly from your Wishlist page.</p>
+
+                                    <h6 class="text-white">Where can I see my reviews?</h6>
+                                    <p>Open your profile dropdown and go to Reviews. You can track your posted opinions from there.</p>
+
+                                    <h6 class="text-white">I cannot find a record I saw before. What should I do?</h6>
+                                    <p>Try clearing filters, adjusting sort, and searching by artist/title spelling variations. Rare releases may rotate in availability.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item bg-transparent border border-secondary rounded mb-3">
+                            <h3 class="accordion-header" id="faqHeadingAccount">
+                                <button class="accordion-button collapsed bg-dark text-white fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqAccount" aria-expanded="false" aria-controls="faqAccount">
+                                    Account &amp; Profile
+                                </button>
+                            </h3>
+                            <div id="faqAccount" class="accordion-collapse collapse" aria-labelledby="faqHeadingAccount" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-white-50">
+                                    <h6 class="text-white">How do I edit my account details?</h6>
+                                    <p>Open your profile menu and select My Account to update your profile information.</p>
+
+                                    <h6 class="text-white">How do I keep my account secure?</h6>
+                                    <p>Use a strong unique password, avoid shared devices without logging out, and always sign out after public computer sessions.</p>
+
+                                    <h6 class="text-white">Can I use one account on multiple devices?</h6>
+                                    <p>Yes, you can sign in from multiple devices, but for safety we recommend logging out from devices you do not control.</p>
+
+                                    <h6 class="text-white">I forgot where key pages are located. Quick recap?</h6>
+                                    <p>Collection is for discovery, Pricing is for tier management, Wishlist stores favorites, Reviews shows your feedback history.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item bg-transparent border border-secondary rounded">
+                            <h3 class="accordion-header" id="faqHeadingSupport">
+                                <button class="accordion-button collapsed bg-dark text-white fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faqSupport" aria-expanded="false" aria-controls="faqSupport">
+                                    Billing, Support &amp; Policies
+                                </button>
+                            </h3>
+                            <div id="faqSupport" class="accordion-collapse collapse" aria-labelledby="faqHeadingSupport" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-white-50">
+                                    <h6 class="text-white">Who do I contact for billing questions?</h6>
+                                    <p>Use the Contact page and include your account username plus a short description of the issue for faster support.</p>
+
+                                    <h6 class="text-white">How long does support usually take?</h6>
+                                    <p>Response times vary by request volume, but account and payment issues are prioritized.</p>
+
+                                    <h6 class="text-white">Can I report bugs or broken pages?</h6>
+                                    <p>Absolutely. Share what happened, the page where it occurred, and steps to reproduce it through Contact.</p>
+
+                                    <h6 class="text-white mb-2">Do you have more policy details?</h6>
+                                    <p class="mb-0">Policy-specific updates are communicated through site notices and support responses when relevant.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -155,3 +155,34 @@ class ProfileUpdateForm(forms.ModelForm):
                 'placeholder': 'Last name',
             }),
         }
+
+
+class ContactForm(forms.Form):
+    """Public contact form for store questions and collaboration inquiries."""
+    full_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control bg-dark text-white border-secondary',
+            'placeholder': 'Your full name',
+        }),
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control bg-dark text-white border-secondary',
+            'placeholder': 'you@example.com',
+        }),
+    )
+    subject = forms.CharField(
+        max_length=120,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control bg-dark text-white border-secondary',
+            'placeholder': 'What is this about?',
+        }),
+    )
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control bg-dark text-white border-secondary',
+            'rows': 5,
+            'placeholder': 'Tell us how we can help.',
+        }),
+    )

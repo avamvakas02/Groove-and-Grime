@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/other-pages.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="other-hero" style="background-image: url('{% static 'images/deep_house.jpg' %}');">
+    <div class="other-hero-overlay">
+        <div class="container py-5">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                    <h6 class="text-warning text-uppercase fw-bold ls-2 mb-3">About Groove & Grime</h6>
+                    <h1 class="display-4 fw-black text-white mb-3">Built by selectors, for selectors</h1>
+                    <p class="lead text-white-50 mb-4">
+                        We are an Athens-based vinyl destination focused on underground sound, careful curation,
+                        and authentic record culture.
+                    </p>
+                    <a href="{% url 'collection' %}" class="btn btn-warning px-4 py-2 fw-bold rounded-pill me-2">Explore Collection</a>
+                    <a href="{% url 'contact' %}" class="btn btn-outline-light px-4 py-2 fw-bold rounded-pill">Contact Team</a>
+                </div>
+                <div class="col-lg-5">
+                    <div class="other-media-card">
+                        <img src="{% static 'images/hero-img.jpg' %}" alt="Curated vinyl selection" class="img-fluid rounded-3">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="other-feature-card h-100 p-4">
+                <h3 class="h5 text-warning mb-3">Our Mission</h3>
+                <p class="text-white-50 mb-0">
+                    Deliver a focused catalogue that helps listeners discover records with character, history,
+                    and dancefloor impact.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="other-feature-card h-100 p-4">
+                <h3 class="h5 text-warning mb-3">Our Curation</h3>
+                <p class="text-white-50 mb-0">
+                    Every release is handpicked for sound quality, artistic value, and relevance to modern
+                    underground scenes.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="other-feature-card h-100 p-4">
+                <h3 class="h5 text-warning mb-3">Our Community</h3>
+                <p class="text-white-50 mb-0">
+                    We support DJs, collectors, and curious newcomers with clear guidance and a welcoming,
+                    music-first experience.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container pb-5">
+    <div class="other-cta text-center p-5">
+        <h2 class="h1 fw-black text-white mb-3">Discover your next essential record</h2>
+        <p class="text-white-50 mb-4">
+            Browse our latest arrivals, deep cuts, and limited pressings selected for true vinyl enthusiasts.
+        </p>
+        <a href="{% url 'collection' %}" class="btn btn-warning btn-lg px-5 fw-bold rounded-pill">Start Digging</a>
+    </div>
+</section>
+{% endblock %}

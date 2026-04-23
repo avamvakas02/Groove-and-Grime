@@ -16,7 +16,7 @@
     <div class="hero-overlay">
         {# Bootstrap container keeps content centered and responsive. #}
         <div class="container">
-            <div class="row">
+            <div class="row align-items-center gy-4">
                 {# Left-aligned intro text on large screens (8/12 grid columns). #}
                 <div class="col-lg-8">
                     {# Small eyebrow text for quick category context. #}
@@ -29,6 +29,12 @@
                     </p>
                     {# Primary call-to-action sends users to the shop collection page. #}
                     <a href="{% url 'collection' %}" class="btn btn-warning btn-lg px-5 py-3 fw-black rounded-0">SHOP THE COLLECTION</a>
+                </div>
+                {# Right-side hero image adds product-focused visual balance on desktop. #}
+                <div class="col-lg-4 d-flex justify-content-center justify-content-lg-end">
+                    <div class="hero-image-frame">
+                        <img src="{% static 'images/hero-img.jpg' %}" class="hero-image" alt="Featured vinyl record selection">
+                    </div>
                 </div>
             </div>
         </div>

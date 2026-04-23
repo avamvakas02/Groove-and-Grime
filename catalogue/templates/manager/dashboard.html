@@ -43,7 +43,7 @@
                         </div>
                     </td>
                     <td>
-                        <a href="{% url 'delete_vinyl' record.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this record?')">Delete</a>
+                        <a href="{% url 'delete_vinyl' record.id %}" class="btn btn-sm btn-outline-danger" data-confirm-delete="Delete this record?">Delete</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -51,4 +51,23 @@
         </table>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('click', (event) => {
+                const deleteLink = event.target.closest('[data-confirm-delete]');
+                if (!deleteLink) {
+                    return;
+                }
+
+                const message = deleteLink.getAttribute('data-confirm-delete') || 'Are you sure?';
+                if (!window.confirm(message)) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
 {% endblock %}

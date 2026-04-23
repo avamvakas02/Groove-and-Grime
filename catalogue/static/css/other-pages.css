@@ -1,0 +1,37 @@
+.other-hero {
+    background-size: cover;
+    background-position: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.other-hero-overlay {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.55));
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+}
+
+.other-media-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 1rem;
+    padding: 0.75rem;
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.4);
+}
+
+.other-feature-card {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1rem;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+.other-cta {
+    background: radial-gradient(circle at top, rgba(255, 193, 7, 0.15), rgba(15, 15, 15, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1.25rem;
+}
+
+.ls-2 {
+    letter-spacing: 2px;
+}

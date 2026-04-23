@@ -9,11 +9,17 @@
 }
 
 /* --- GLOBAL STYLES --- */
+html {
+    /* Reserve scrollbar space to prevent horizontal layout jump. */
+    scrollbar-gutter: stable;
+}
+
 body {
     background-color: var(--bg-body);
     color: var(--text-pure) !important; /* Force global white text */
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
+    overflow-y: scroll;
 }
 
 /* --- NAVIGATION --- */
