@@ -4,6 +4,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.templatetags.static import static
+from django.contrib.staticfiles import finders
+import os
 
 
 # --- Custom user model ---
@@ -96,6 +98,13 @@ class Category(models.Model):
 # --- Vinyl inventory model ---
 
 class VinylRecord(models.Model):
+    STATIC_VINYL_CATEGORY_DIRS = (
+        'vinyls/categories/deep-house',
+        'vinyls/categories/chicago-jackin',
+        'vinyls/categories/acid-house',
+        'vinyls/categories/tech-house',
+    )
+
     """Main product model for records displayed in the collection, cart, and wishlist."""
     CONDITION_CHOICES = (
         ('Mint', 'Mint (M)'),
@@ -133,7 +142,16 @@ class VinylRecord(models.Model):
 
         image_name = (self.image.name or '').strip()
         if image_name.startswith(('vinyls/', 'images/')):
-            return static(image_name)
+            # Direct static path first.
+            if finders.find(image_name):
+                return static(image_name)
+
+            # Seed data stores "vinyls/<file>" while assets live in category subfolders.
+            filename = os.path.basename(image_name)
+            for category_dir in self.STATIC_VINYL_CATEGORY_DIRS:
+                candidate = f"{category_dir}/{filename}"
+                if finders.find(candidate):
+                    return static(candidate)
 
         try:
             return self.image.url
