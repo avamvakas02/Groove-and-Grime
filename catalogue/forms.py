@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm
@@ -123,6 +125,119 @@ class MembershipPaymentForm(forms.Form):
         month_num = int(month)
         if month_num < 1 or month_num > 12:
             raise ValidationError("Please enter a valid expiry month.")
+        return raw
+
+    def clean_cvv(self):
+        raw = self.cleaned_data['cvv'].strip()
+        if not raw.isdigit() or len(raw) not in (3, 4):
+            raise ValidationError("Please enter a valid CVV.")
+        return raw
+
+
+class CartCheckoutForm(forms.Form):
+    """Collect checkout details and validate payment card fields."""
+    full_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control bg-dark text-white border-secondary',
+            'placeholder': 'Full name',
+            'autocomplete': 'name',
+        }),
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control bg-dark text-white border-secondary',
+            'placeholder': 'you@example.com',
+            'autocomplete': 'email',
+        }),
+    )
+    address_line_1 = forms.CharField(
+        max_length=120,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control bg-dark text-white border-secondary',
+            'placeholder': 'Street and number',
+            'autocomplete': 'address-line1',
+        }),
+    )
+    city = forms.CharField(
+        max_length=60,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control bg-dark text-white border-secondary',
+            'placeholder': 'City',
+            'autocomplete': 'address-level2',
+        }),
+    )
+    postal_code = forms.CharField(
+        max_length=12,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control bg-dark text-white border-secondary',
+            'placeholder': 'Postal code',
+            'autocomplete': 'postal-code',
+        }),
+    )
+    card_number = forms.CharField(
+        max_length=19,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control bg-dark text-white border-secondary',
+            'placeholder': '1234 5678 9012 3456',
+            'autocomplete': 'cc-number',
+            'inputmode': 'numeric',
+        }),
+    )
+    expiry_date = forms.CharField(
+        max_length=5,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control bg-dark text-white border-secondary',
+            'placeholder': 'MM/YY',
+            'autocomplete': 'cc-exp',
+        }),
+    )
+    cvv = forms.CharField(
+        max_length=4,
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control bg-dark text-white border-secondary',
+            'placeholder': 'CVV',
+            'autocomplete': 'cc-csc',
+            'inputmode': 'numeric',
+        }),
+    )
+
+    def clean_full_name(self):
+        value = self.cleaned_data['full_name'].strip()
+        if len(value.split()) < 2:
+            raise ValidationError("Please enter both first and last name.")
+        return value
+
+    def clean_postal_code(self):
+        value = self.cleaned_data['postal_code'].strip()
+        normalized = value.replace(' ', '')
+        if len(normalized) < 4 or not any(ch.isdigit() for ch in normalized):
+            raise ValidationError("Please enter a valid postal code.")
+        return value
+
+    def clean_card_number(self):
+        raw = self.cleaned_data['card_number']
+        digits_only = ''.join(ch for ch in raw if ch.isdigit())
+        if len(digits_only) < 13 or len(digits_only) > 19:
+            raise ValidationError("Please enter a valid card number.")
+        return digits_only
+
+    def clean_expiry_date(self):
+        raw = self.cleaned_data['expiry_date'].strip()
+        if len(raw) != 5 or raw[2] != '/':
+            raise ValidationError("Expiry date must be in MM/YY format.")
+        month, year = raw.split('/')
+        if not (month.isdigit() and year.isdigit()):
+            raise ValidationError("Expiry date must be in MM/YY format.")
+
+        month_num = int(month)
+        if month_num < 1 or month_num > 12:
+            raise ValidationError("Please enter a valid expiry month.")
+
+        current = datetime.now()
+        expiry_year = 2000 + int(year)
+        if expiry_year < current.year or (expiry_year == current.year and month_num < current.month):
+            raise ValidationError("This card appears to be expired.")
         return raw
 
     def clean_cvv(self):

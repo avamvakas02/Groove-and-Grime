@@ -58,6 +58,11 @@
             <span class="text-warning text-uppercase fw-black">Total</span>
             <span class="text-warning fw-black" style="font-size: 2rem;">&euro;<span data-cart-total>{{ total_after_discount|floatformat:2 }}</span></span>
         </div>
+        <div class="mt-4 text-end">
+            <a href="{% url 'cart_checkout' %}" class="btn btn-warning rounded-0 fw-black px-4">
+                Proceed To Checkout
+            </a>
+        </div>
     </div>
     {% else %}
     <div class="text-center py-5 border border-secondary bg-dark bg-opacity-50">

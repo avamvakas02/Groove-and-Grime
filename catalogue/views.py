@@ -11,6 +11,7 @@ from .forms import (
     RegisterForm,
     VinylRecordForm,
     MembershipPaymentForm,
+    CartCheckoutForm,
     ProfileUpdateForm,
     ContactForm,
 )
@@ -456,6 +457,42 @@ def cart_update_quantity(request, record_id):
         })
 
     return redirect('cart_detail')
+
+
+@purchase_access_required
+def cart_checkout(request):
+    """Collect checkout details for current cart and simulate payment."""
+    cart = Cart(request)
+    if len(cart) == 0:
+        messages.error(request, "Your crate is empty. Add records before checkout.")
+        return redirect('cart_detail')
+
+    totals = _cart_totals_context(request, cart)
+    if request.method == 'POST':
+        form = CartCheckoutForm(request.POST)
+        if form.is_valid():
+            # In this demo flow we do not persist payment details.
+            request.session['cart'] = {}
+            request.session.modified = True
+            return redirect('payment_success')
+        messages.error(request, "Please fix the errors in your checkout details.")
+    else:
+        form = CartCheckoutForm(initial={
+            'full_name': request.user.get_full_name() if request.user.is_authenticated else '',
+            'email': request.user.email if request.user.is_authenticated else '',
+        })
+
+    return render(request, 'checkout.html', {
+        'form': form,
+        'cart': cart,
+        **totals,
+    })
+
+
+@purchase_access_required
+def payment_success(request):
+    """Display payment success confirmation after completed checkout."""
+    return render(request, 'payment_success.html')
 
 
 # --- 4. Manager dashboard (front-end management) ---

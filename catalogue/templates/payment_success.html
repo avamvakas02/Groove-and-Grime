@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 pt-5 pb-5 text-center">
+    <div class="mx-auto border border-success p-5 bg-dark bg-opacity-50" style="max-width: 640px;">
+        <h2 class="text-success fw-black text-uppercase mb-3">Payment Successful</h2>
+        <p class="text-white-50 mb-4">
+            Your order has been placed successfully. Thank you for shopping with Groove &amp; Grime.
+        </p>
+        <a href="{% url 'collection' %}" class="btn btn-warning rounded-0 fw-black px-4">Continue Shopping</a>
+    </div>
+</div>
+{% endblock %}

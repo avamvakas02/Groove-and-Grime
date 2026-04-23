@@ -26,12 +26,18 @@ urlpatterns = [
     # --- Authentication ---
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('password-reset/', auth_views.PasswordResetView.as_view(template_name='password_reset_form.html'), name='password_reset'),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset_done.html'), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'), name='password_reset_complete'),
 
     # --- Cart / crate ---
     path('cart/', views.cart_detail, name='cart_detail'),
     path('cart/add/<int:record_id>/', views.cart_add, name='cart_add'),
     path('cart/update/<int:record_id>/', views.cart_update_quantity, name='cart_update_quantity'),
     path('cart/remove/<int:record_id>/', views.cart_remove, name='cart_remove'),
+    path('cart/checkout/', views.cart_checkout, name='cart_checkout'),
+    path('payment/success/', views.payment_success, name='payment_success'),
     path('records/<int:record_id>/review/', views.save_review, name='save_review'),
 
     # --- Manager dashboard ---

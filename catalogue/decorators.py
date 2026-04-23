@@ -10,7 +10,7 @@ def has_pro_access(user):
         return False
     if user.is_superuser or user.is_staff:
         return True
-    return user.tier in {'PRO', 'PRO_PLUS', 'MANAGER'}
+    return user.tier in {'PRO', 'PRO_PLUS', 'MANAGER', 'ADMIN'}
 
 
 def has_pro_plus_access(user):
@@ -19,7 +19,7 @@ def has_pro_plus_access(user):
         return False
     if user.is_superuser or user.is_staff:
         return True
-    return user.tier in {'PRO_PLUS', 'MANAGER'}
+    return user.tier in {'PRO_PLUS', 'MANAGER', 'ADMIN'}
 
 
 def manager_required(view_func):
@@ -28,9 +28,9 @@ def manager_required(view_func):
     """
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        # Grant access to MANAGER tier, Django staff admins, or superusers.
+        # Grant access to MANAGER/ADMIN tiers, Django staff admins, or superusers.
         if request.user.is_authenticated and (
-            request.user.tier == 'MANAGER' or request.user.is_staff or request.user.is_superuser
+            request.user.tier in {'MANAGER', 'ADMIN'} or request.user.is_staff or request.user.is_superuser
         ):
             return view_func(request, *args, **kwargs)
         raise PermissionDenied

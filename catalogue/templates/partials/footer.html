@@ -1,10 +1,59 @@
 {% load static %}
-<footer class="mt-5 py-5 border-top border-secondary text-center">
+<footer class="mt-5 pt-5 pb-4 border-top border-secondary">
     <div class="container">
-        <a class="footer-logo text-warning d-inline-flex flex-column align-items-center mb-3 text-decoration-none" href="{% url 'home' %}">
-            <img src="{% static 'images/logo.png' %}" alt="Groove & Grime logo" class="footer-brand-logo mb-2">
-        </a>
-        <p class="text-muted small mb-0">Premium House Music Vinyl Boutique</p>
-        <p class="text-muted small">&copy; 2026 Athens, Greece.</p>
+        <div class="row g-4 text-center text-md-start footer-main-row">
+            <div class="col-12 col-lg-4">
+                <a class="footer-logo text-warning d-inline-flex flex-column align-items-center align-items-md-start mb-3 text-decoration-none" href="{% url 'home' %}">
+                    <img src="{% static 'images/logo.png' %}" alt="Groove & Grime logo" class="footer-brand-logo mb-2">
+                </a>
+                <p class="text-muted small mb-2">Premium House Music Vinyl Boutique</p>
+                <p class="text-muted small mb-0">Athens, Greece</p>
+            </div>
+
+            <div class="col-12 col-lg-8">
+                <div class="row g-4 footer-sections-row">
+                    <div class="col-6 col-md-4">
+                        <h6 class="text-uppercase text-warning small fw-bold mb-3 footer-section-title">Explore</h6>
+                        <ul class="list-unstyled small mb-0">
+                            <li class="mb-2"><a class="text-decoration-none text-light-emphasis footer-link" href="{% url 'collection' %}">Collection</a></li>
+                            <li class="mb-2"><a class="text-decoration-none text-light-emphasis footer-link" href="{% url 'artists' %}">Artists</a></li>
+                            <li class="mb-2"><a class="text-decoration-none text-light-emphasis footer-link" href="{% url 'labels' %}">Labels</a></li>
+                            <li><a class="text-decoration-none text-light-emphasis footer-link" href="{% url 'editorial' %}">Editorial</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-6 col-md-4">
+                        <h6 class="text-uppercase text-warning small fw-bold mb-3 footer-section-title">Account</h6>
+                        <ul class="list-unstyled small mb-0">
+                            {% if user.is_authenticated %}
+                            <li class="mb-2"><a class="text-decoration-none text-light-emphasis footer-link" href="{% url 'profile' %}">My Account</a></li>
+                            <li class="mb-2"><a class="text-decoration-none text-light-emphasis footer-link" href="{% url 'wishlist' %}">Wishlist</a></li>
+                            <li><a class="text-decoration-none text-light-emphasis footer-link" href="{% url 'my_reviews' %}">Reviews</a></li>
+                            {% else %}
+                            <li class="mb-2"><a class="text-decoration-none text-light-emphasis footer-link" href="{% url 'login' %}">Login</a></li>
+                            <li class="mb-2"><a class="text-decoration-none text-light-emphasis footer-link" href="{% url 'register' %}">Register</a></li>
+                            <li><a class="text-decoration-none text-light-emphasis footer-link" href="{% url 'pricing' %}">Membership</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <h6 class="text-uppercase text-warning small fw-bold mb-3 footer-section-title">Support</h6>
+                        <ul class="list-unstyled small mb-3">
+                            <li class="mb-2"><a class="text-decoration-none text-light-emphasis footer-link" href="{% url 'about' %}">About Us</a></li>
+                            <li class="mb-2"><a class="text-decoration-none text-light-emphasis footer-link" href="{% url 'contact' %}">Contact</a></li>
+                            <li><a class="text-decoration-none text-light-emphasis footer-link" href="{% url 'faq' %}">FAQ</a></li>
+                        </ul>
+                        <div class="small text-muted">
+                            <span class="d-block">Instagram: @grooveandgrime</span>
+                            <span class="d-block">support@grooveandgrime.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="border-secondary my-4">
+        <p class="text-muted small text-center mb-0">&copy; 2026 Groove &amp; Grime. All rights reserved.</p>
     </div>
 </footer>

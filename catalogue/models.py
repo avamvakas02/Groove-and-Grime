@@ -11,6 +11,7 @@ class User(AbstractUser):
         ('PRO', 'Pro'),
         ('PRO_PLUS', 'Pro+'),
         ('MANAGER', 'Manager'),
+        ('ADMIN', 'Admin'),
     )
     
     tier = models.CharField(
@@ -51,7 +52,14 @@ class User(AbstractUser):
 
     def __str__(self):
         """Show username and tier in admin/list displays."""
-        return f"{self.username} ({self.get_tier_display()})"
+        return f"{self.username} ({self.tier_label})"
+
+    @property
+    def tier_label(self):
+        """Display a friendly tier label with explicit admin priority."""
+        if self.is_superuser or self.tier == 'ADMIN':
+            return "Admin"
+        return self.get_tier_display()
 
     @property
     def is_pro_member(self):
@@ -61,14 +69,14 @@ class User(AbstractUser):
         """
         if self.is_superuser or self.is_staff:
             return True
-        return self.tier in {'PRO', 'PRO_PLUS', 'MANAGER'}
+        return self.tier in {'PRO', 'PRO_PLUS', 'MANAGER', 'ADMIN'}
 
     @property
     def is_pro_plus_member(self):
         """True when the account has top-tier Pro+ storefront access."""
         if self.is_superuser or self.is_staff:
             return True
-        return self.tier in {'PRO_PLUS', 'MANAGER'}
+        return self.tier in {'PRO_PLUS', 'MANAGER', 'ADMIN'}
 
 
 # --- Product category model ---
